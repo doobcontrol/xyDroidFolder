@@ -25,13 +25,15 @@ namespace xyDroidFolder
         {
             InitializeComponent();
 
-            this.Text = Properties.Resources.AppName;
+            R.setCulture(""); //zh-CN
+
+            this.Text = R.AppName;
 
             panel1.Width = qrSize;
             pictureBox1.Height = qrSize;
 
-            button1.Text = Properties.Resources.App_Exit;
-            label1.Text = Properties.Resources.ScanTitle;
+            button1.Text = R.App_Exit;
+            label1.Text = R.ScanTitle;
 
             try
             {
