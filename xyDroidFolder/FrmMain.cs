@@ -19,7 +19,8 @@ namespace xyDroidFolder
         bool isDebug = false;
 
         int qrSize = 200;
-        int port = 12919;
+        int chatPort = 12919;
+        int streamPort = 12920;
 
         public FrmMain()
         {
