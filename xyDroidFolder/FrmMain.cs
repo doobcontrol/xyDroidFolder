@@ -196,19 +196,33 @@ namespace xyDroidFolder
                         TempTn.Tag = false;
                     }
 
-                    foreach (string file in files)
-                    {
-                        TempTn = tn.Nodes.Add(file);
-                        TempTn.Tag = false;
-                    }
-
                     tn.Tag = true;
                     tn.Text = tv.Tag.ToString();
                     tv.EndUpdate();
 
                     tn.Expand();
+
+                    //show files
+                    showFiles(files);
                 }
             }
+        }
+
+        private void showFiles(string[] files)
+        {
+            listView1.Clear();
+
+            // Set the view to show details.
+            listView1.View = View.List;
+
+            listView1.Columns.Add("name", -2, HorizontalAlignment.Left);
+
+            foreach (string file in files)
+            {
+                listView1.Items.Add(file);
+            }
+            listView1.Visible = true;
+
         }
     }
 }
