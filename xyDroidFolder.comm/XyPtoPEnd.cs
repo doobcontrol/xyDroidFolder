@@ -66,6 +66,10 @@ namespace xyDroidFolder.comm
                         _xyPtoPRequestHandler(commData, commResult);
                         commResult.cmdSucceed = true;
                         break;
+                    case XyPtoPCmd.ActiveGetFolder:
+                        _xyPtoPRequestHandler(commData, commResult);
+                        commResult.cmdSucceed = true;
+                        break;
 
                     default:
                         commResult.resultDataDic.Add(
@@ -139,9 +143,18 @@ namespace xyDroidFolder.comm
         static public string FolderparKey_folders = "folders";
         static public string FolderparKey_files = "files";
         static public string FolderparKey_hostName = "hostName";
+        static public string FolderparKey_requestfolder = "requestfolder";
         public async Task<CommResult> ActiveGetInitFolder()
         {
             CommData commData = new CommData(XyPtoPCmd.ActiveGetInitFolder);
+
+            return await sendData(commData);
+        }
+        public async Task<CommResult> ActiveGetFolder(string requestFolder)
+        {
+            CommData commData = new CommData(XyPtoPCmd.ActiveGetFolder);
+            commData.cmdParDic.Add(
+                FolderparKey_requestfolder, requestFolder);
 
             return await sendData(commData);
         }
@@ -173,6 +186,7 @@ namespace xyDroidFolder.comm
     public enum XyPtoPEndType { ActiveEnd, PassiveEnd }
     public enum XyPtoPCmd {
         PassiveRegist,
-        ActiveGetInitFolder
+        ActiveGetInitFolder,
+        ActiveGetFolder
     }
 }

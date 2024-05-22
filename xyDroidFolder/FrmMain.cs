@@ -151,7 +151,6 @@ namespace xyDroidFolder
             }
         }
 
-
         static public void runEmulator()
         {
             Process[] pname = Process.GetProcessesByName("SimulateAndroid");
@@ -192,8 +191,11 @@ namespace xyDroidFolder
 
                     foreach (string folder in folders)
                     {
-                        TempTn = tn.Nodes.Add(folder);
-                        TempTn.Tag = false;
+                        if (folder != "")
+                        {
+                            TempTn = tn.Nodes.Add(folder);
+                            TempTn.Tag = false;
+                        }
                     }
 
                     tn.Tag = true;
@@ -201,6 +203,48 @@ namespace xyDroidFolder
                     tv.EndUpdate();
 
                     tn.Expand();
+
+                    //show files
+                    showFiles(files);
+                }
+            }
+            else
+            {
+                if (!(bool)tn.Tag)
+                {
+                    string path = tn.FullPath.Replace(
+                        tv.Tag.ToString() + "\\","");
+
+                    CommResult commResult =
+                        await xyPtoPEnd.ActiveGetFolder(path);
+
+
+                    string[] folders = commResult.resultDataDic[
+                        XyPtoPEnd.FolderparKey_folders
+                        ].Split("|");
+                    string[] files = commResult.resultDataDic[
+                        XyPtoPEnd.FolderparKey_files
+                        ].Split("|");
+
+                    tv.BeginUpdate();
+                    TreeNode TempTn;
+
+                    foreach (string folder in folders)
+                    {
+                        if (folder != "")
+                        {
+                            TempTn = tn.Nodes.Add(folder);
+                            TempTn.Tag = false;
+                        }
+                    }
+
+                    tn.Tag = true;
+                    tv.EndUpdate();
+
+                    if(folders.Length > 0)
+                    {
+                        tn.Expand();
+                    }
 
                     //show files
                     showFiles(files);

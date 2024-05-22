@@ -75,17 +75,20 @@ namespace SimulateAndroid
             }
         }
 
+        string path = "C:\\DepGitHub\\xyDroidFolder";
         private void XyPtoPRequestHandler(CommData commData, CommResult commResult)
         {
             showMsg("in request:" + commData.cmd.ToString());
+            string[] subdirectoryEntries;
+            string folderStr = "";
+            string[] fileEntries;
+            string fileStr = "";
             switch (commData.cmd)
             {
                 case XyPtoPCmd.ActiveGetInitFolder:
-                    string path = ".";
 
-                    string[] subdirectoryEntries = Directory.GetDirectories(
+                    subdirectoryEntries = Directory.GetDirectories(
                         path);
-                    string folderStr = "";
                     foreach (string subdirectory in subdirectoryEntries)
                     {
                         if (folderStr != "")
@@ -97,9 +100,8 @@ namespace SimulateAndroid
                     commResult.resultDataDic.Add(
                         XyPtoPEnd.FolderparKey_folders, folderStr);
 
-                    string[] fileEntries = Directory.GetFiles(
+                    fileEntries = Directory.GetFiles(
                         path);
-                    string fileStr = "";
                     foreach (string fileName in fileEntries)
                     {
                         if (fileStr != "")
@@ -112,6 +114,39 @@ namespace SimulateAndroid
                         XyPtoPEnd.FolderparKey_files, fileStr);
                     ;
                     showMsg("sent folder info:" + path);
+
+                    break;
+                case XyPtoPCmd.ActiveGetFolder:
+                    string requestfolder = 
+                        commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfolder];
+                    string reqPath = Path.Combine(path, requestfolder);
+                    subdirectoryEntries = Directory.GetDirectories(
+                        reqPath);
+                    foreach (string subdirectory in subdirectoryEntries)
+                    {
+                        if (folderStr != "")
+                        {
+                            folderStr += "|";
+                        }
+                        folderStr += Path.GetFileName(subdirectory);
+                    }
+                    commResult.resultDataDic.Add(
+                        XyPtoPEnd.FolderparKey_folders, folderStr);
+
+                    fileEntries = Directory.GetFiles(
+                        reqPath);
+                    foreach (string fileName in fileEntries)
+                    {
+                        if (fileStr != "")
+                        {
+                            fileStr += "|";
+                        }
+                        fileStr += Path.GetFileName(fileName);
+                    }
+                    commResult.resultDataDic.Add(
+                        XyPtoPEnd.FolderparKey_files, fileStr);
+                    ;
+                    showMsg("sent folder info:" + reqPath);
 
                     break;
                 default:
