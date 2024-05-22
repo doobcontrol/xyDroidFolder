@@ -34,6 +34,8 @@ namespace SimulateAndroid
             pLocalEndPars.Add(XyUdpComm.workparKey_remoteIP, "192.168.168.129");
             pLocalEndPars.Add(XyUdpComm.workparKey_remoteChatPort, "12921");
             pLocalEndPars.Add(XyUdpComm.workparKey_remoteStreamPort, "12922");
+            pLocalEndPars.Add(XyPtoPEnd.FolderparKey_hostName,
+                System.Environment.MachineName);
 
             Dictionary<string, string> pRemoteEndPars
                 = new Dictionary<string, string>();
@@ -108,7 +110,7 @@ namespace SimulateAndroid
                     }
                     commResult.resultDataDic.Add(
                         XyPtoPEnd.FolderparKey_files, fileStr);
-
+                    ;
                     showMsg("sent folder info:" + path);
 
                     break;

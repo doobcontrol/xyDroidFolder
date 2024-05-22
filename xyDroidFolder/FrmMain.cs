@@ -121,24 +121,30 @@ namespace xyDroidFolder
             switch (commData.cmd)
             {
                 case XyPtoPCmd.PassiveRegist:
-                    initFoldTree(treeView1);
+                    initFoldTree(
+                        treeView1, 
+                        commData.cmdParDic[XyPtoPEnd.FolderparKey_hostName]);
                     break;
                 default:
                     break;
             }
         }
 
-        private void initFoldTree(TreeView treeView)
+        private void initFoldTree(TreeView treeView, string hostName)
         {
             if (treeView.InvokeRequired)
             {
-                treeView.Invoke(new Action(() => { initFoldTree(treeView); }));
+                treeView.Invoke(new Action(() => { 
+                    initFoldTree(treeView, hostName); }));
             }
             else
             {
+                treeView.Tag = hostName;
                 treeView.BeginUpdate();
-                TreeNode tn = treeView.Nodes.Add(R.InitFolderNode);
+                TreeNode tn = treeView.Nodes.Add(
+                    hostName + "(" + R.InitFolderNode + ")");
                 tn.ImageIndex = 3;
+                tn.SelectedImageIndex = 3;
                 tn.Tag = false;
                 treeView.EndUpdate();
                 treeView.Visible = true;
@@ -197,6 +203,7 @@ namespace xyDroidFolder
                     }
 
                     tn.Tag = true;
+                    tn.Text = tv.Tag.ToString();
                     tv.EndUpdate();
 
                     tn.Expand();

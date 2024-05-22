@@ -138,6 +138,7 @@ namespace xyDroidFolder.comm
 
         static public string FolderparKey_folders = "folders";
         static public string FolderparKey_files = "files";
+        static public string FolderparKey_hostName = "hostName";
         public async Task<CommResult> ActiveGetInitFolder()
         {
             CommData commData = new CommData(XyPtoPCmd.ActiveGetInitFolder);
