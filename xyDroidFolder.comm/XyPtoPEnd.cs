@@ -48,6 +48,7 @@ namespace xyDroidFolder.comm
                 CommResult commResult = new CommResult(commData);
                 switch (commData.cmd)
                 {
+                    //cmd from PassiveEnd
                     case XyPtoPCmd.PassiveRegist:
 
                         myIXyComm.setTargetEndPoint(commData.cmdParDic);
@@ -59,6 +60,13 @@ namespace xyDroidFolder.comm
                             "Regist ok");
                         commResult.cmdSucceed = true;
                         break;
+
+                    //cmd from ActiveEnd
+                    case XyPtoPCmd.ActiveGetInitFolder:
+                        _xyPtoPRequestHandler(commData, commResult);
+                        commResult.cmdSucceed = true;
+                        break;
+
                     default:
                         commResult.resultDataDic.Add(
                             CommResult.resultDataKey_ErrorInfo, 
@@ -128,6 +136,15 @@ namespace xyDroidFolder.comm
 
         #region 主控端命令
 
+        static public string FolderparKey_folders = "folders";
+        static public string FolderparKey_files = "files";
+        public async Task<CommResult> ActiveGetInitFolder()
+        {
+            CommData commData = new CommData(XyPtoPCmd.ActiveGetInitFolder);
+
+            return await sendData(commData);
+        }
+
         #endregion
 
         #region 被控端命令
@@ -154,6 +171,7 @@ namespace xyDroidFolder.comm
         XyPtoPRequestHandler(CommData commData, CommResult commResult);
     public enum XyPtoPEndType { ActiveEnd, PassiveEnd }
     public enum XyPtoPCmd {
-        PassiveRegist, 
+        PassiveRegist,
+        ActiveGetInitFolder
     }
 }

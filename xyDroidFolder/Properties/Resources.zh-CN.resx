@@ -123,6 +123,9 @@
   <data name="App_Exit" xml:space="preserve">
     <value>退出</value>
   </data>
+  <data name="InitFolderNode" xml:space="preserve">
+    <value>点击获取初始目录内容</value>
+  </data>
   <data name="ScanTitle" xml:space="preserve">
     <value>扫描此条码连接</value>
   </data>

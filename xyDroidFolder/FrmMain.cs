@@ -14,6 +14,7 @@ using ZXing;
 using xyDroidFolder.comm;
 using System.Diagnostics;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using TreeView = System.Windows.Forms.TreeView;
 
 namespace xyDroidFolder
 {
@@ -127,15 +128,19 @@ namespace xyDroidFolder
             }
         }
 
-        private void initFoldTree(System.Windows.Forms.TreeView treeView)
+        private void initFoldTree(TreeView treeView)
         {
-            if (treeView1.InvokeRequired)
+            if (treeView.InvokeRequired)
             {
-                treeView1.Invoke(new Action(() => { initFoldTree(treeView1); }));
+                treeView.Invoke(new Action(() => { initFoldTree(treeView); }));
             }
             else
             {
-                treeView1.Visible = true;
+                treeView.BeginUpdate();
+                TreeNode tn = treeView.Nodes.Add(R.InitFolderNode);
+                tn.Tag = false;
+                treeView.EndUpdate();
+                treeView.Visible = true;
             }
         }
 
@@ -154,6 +159,46 @@ namespace xyDroidFolder
         private void btnExit_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private async void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            TreeNode tn = e.Node;
+            TreeView tv = sender as TreeView;
+            if (tn.Level == 0 )
+            {
+                if(!(bool)tn.Tag)
+                {
+                    CommResult commResult =
+                        await xyPtoPEnd.ActiveGetInitFolder();
+
+
+                    string[] folders = commResult.resultDataDic[
+                        XyPtoPEnd.FolderparKey_folders
+                        ].Split("|");
+                    string[] files = commResult.resultDataDic[
+                        XyPtoPEnd.FolderparKey_files
+                        ].Split("|");
+
+                    tv.BeginUpdate();
+                    TreeNode TempTn;
+
+                    foreach (string folder in folders)
+                    {
+                        TempTn = tn.Nodes.Add(folder);
+                        TempTn.Tag = false;
+                    }
+
+                    foreach (string file in files)
+                    {
+                        TempTn = tn.Nodes.Add(file);
+                        TempTn.Tag = false;
+                    }
+
+                    tn.Tag = true;
+                    tv.EndUpdate();
+                }
+            }
         }
     }
 }

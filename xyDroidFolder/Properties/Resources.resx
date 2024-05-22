@@ -123,6 +123,9 @@
   <data name="App_Exit" xml:space="preserve">
     <value>Exit</value>
   </data>
+  <data name="InitFolderNode" xml:space="preserve">
+    <value>Click to get initial folder content</value>
+  </data>
   <data name="ScanTitle" xml:space="preserve">
     <value>Scan this QR to connect</value>
   </data>

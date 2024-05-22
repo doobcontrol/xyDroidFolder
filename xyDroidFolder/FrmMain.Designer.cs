@@ -69,9 +69,9 @@
             // listView1
             // 
             listView1.Dock = DockStyle.Fill;
-            listView1.Location = new Point(187, 0);
+            listView1.Location = new Point(256, 0);
             listView1.Name = "listView1";
-            listView1.Size = new Size(413, 415);
+            listView1.Size = new Size(344, 415);
             listView1.TabIndex = 1;
             listView1.UseCompatibleStateImageBehavior = false;
             // 
@@ -80,8 +80,9 @@
             treeView1.Dock = DockStyle.Left;
             treeView1.Location = new Point(0, 0);
             treeView1.Name = "treeView1";
-            treeView1.Size = new Size(187, 415);
+            treeView1.Size = new Size(256, 415);
             treeView1.TabIndex = 2;
+            treeView1.NodeMouseClick += treeView1_NodeMouseClick;
             // 
             // panel3
             // 

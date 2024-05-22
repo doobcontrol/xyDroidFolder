@@ -103,8 +103,9 @@ namespace xyDroidFolder.comm
                             break;
                         }
 
+                        IPEndPoint tempPoint = new IPEndPoint(IPAddress.Any, 0);
                         byte[] receivedBytes 
-                            = udpChatServer.Receive(ref targetChatPoint); //??
+                            = udpChatServer.Receive(ref tempPoint); //??
 
                         XyCommEventHandler(
                             this, 

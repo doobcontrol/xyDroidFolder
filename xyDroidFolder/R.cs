@@ -39,6 +39,8 @@ namespace xyDroidFolder
             => ResourceManager.GetString("App_Exit");
         static public string? ScanTitle 
             => ResourceManager.GetString("ScanTitle");
+        static public string? InitFolderNode
+            => ResourceManager.GetString("InitFolderNode");
 
     }
 }
