@@ -18,5 +18,6 @@ namespace xyDroidFolder.comm
         void setCommEventHandler(
             EventHandler<XyCommEventArgs> XyCommEventHandler
             );
+        void clean();
     }
 }

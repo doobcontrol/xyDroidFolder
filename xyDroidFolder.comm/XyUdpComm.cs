@@ -23,7 +23,7 @@ namespace xyDroidFolder.comm
         IPEndPoint targetChatPoint;
         IPEndPoint targetStreamPoint;
 
-        public event EventHandler<XyCommEventArgs> XyCommEventHandler;
+        private event EventHandler<XyCommEventArgs> XyCommEventHandler;
 
         public XyUdpComm(Dictionary<string, string> workpars) {
 
@@ -86,6 +86,7 @@ namespace xyDroidFolder.comm
         private int sleepTime = 50;
         public void startListen()
         {
+            stopListen = false;
             _ = Task.Run(
             () =>
             {
@@ -141,9 +142,24 @@ namespace xyDroidFolder.comm
                 int.Parse(pEndPars[workparKey_remoteStreamPort]));
         }
 
-        public void setCommEventHandler(EventHandler<XyCommEventArgs> XyCommEventHandler)
+        public void setCommEventHandler(EventHandler<XyCommEventArgs> xyCommEventHandler)
         {
-            XyCommEventHandler += XyCommEventHandler;
+            XyCommEventHandler += xyCommEventHandler;
+        }
+
+        public void clean()
+        {
+            stopListen = true;
+            if (udpChatServer != null)
+            {
+                udpChatServer.Close();
+                udpChatServer = null;
+            }
+            if (udpStreamServer != null)
+            {
+                udpStreamServer.Close();
+                udpStreamServer = null;
+            }
         }
 
         #endregion

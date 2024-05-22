@@ -10,13 +10,15 @@ namespace xyDroidFolder.comm
     {
         private IXyComm myIXyComm;
         private XyPtoPEndType myXyPtoPEndType;
-
+        private XyPtoPRequestHandler _xyPtoPRequestHandler;
         public XyPtoPEnd(
             XyPtoPEndType endType, 
-            Dictionary<string, string> pEndPars
+            Dictionary<string, string> pEndPars,
+            XyPtoPRequestHandler xyPtoPRequestHandler
             )
         {
             myXyPtoPEndType = endType;
+            _xyPtoPRequestHandler = xyPtoPRequestHandler;
 
             myIXyComm = new XyUdpComm(pEndPars); //配置实现类？
             myIXyComm.setCommEventHandler(myIXyCommEventRaise);
@@ -42,23 +44,26 @@ namespace xyDroidFolder.comm
             {
                 //cmd send by other end. need reply
                 CommData commData = CommData.fromReceivedData(parsDic);
+
                 CommResult commResult = new CommResult(commData);
-
-                XyPtoPCmd cmd = 
-                    (XyPtoPCmd)Enum.Parse(
-                        typeof(XyPtoPCmd), 
-                        parsDic[CommData.commDicKey_cmd], 
-                        false
-                        );
-
-                switch (cmd)
+                switch (commData.cmd)
                 {
                     case XyPtoPCmd.PassiveRegist:
 
+                        myIXyComm.setTargetEndPoint(commData.cmdParDic);
+
+                        _xyPtoPRequestHandler(commData, commResult);
+
                         commResult.resultDataDic.Add(
                             CommResult.resultDataKey_ActiveEndInfo, 
-                            ""
-                            );
+                            "Regist ok");
+                        commResult.cmdSucceed = true;
+                        break;
+                    default:
+                        commResult.resultDataDic.Add(
+                            CommResult.resultDataKey_ErrorInfo, 
+                            "Cannot hand this command");
+                        commResult.cmdSucceed = true;
                         break;
                 }
 
@@ -70,12 +75,21 @@ namespace xyDroidFolder.comm
                 sendDataResult = CommResult.fromReceivedResult(parsDic);
             }
         }
+        public void clean()
+        {
+            if (myIXyComm != null)
+            {
+                myIXyComm.clean();
+            }
+        }
 
         #region 命令
 
         private int sleepTime = 50;
         private CommResult sendDataResult;
-        public async Task<CommResult> sendData(CommData commData)
+        public async Task<CommResult> sendData(
+            CommData commData
+            )
         {
             CommResult taskResult =  await Task.Run(
                 () => {
@@ -87,6 +101,10 @@ namespace xyDroidFolder.comm
                         if(sendDataResult != null)
                         {
                             //检查是否配置的响应                            
+                            if(sendDataResult.cmdID != commData.cmdID)
+                            {
+                                sendDataResult.errorCmdID = true;
+                            }
 
                             break;
                         }
@@ -114,9 +132,15 @@ namespace xyDroidFolder.comm
 
         #region 被控端命令
 
-        public async Task<CommResult> Regist(Dictionary<string, string> pEndPars)
+        public async Task<CommResult> Regist(
+            Dictionary<string, string> pLocalEndPars,
+            Dictionary<string, string> pRemoteEndPars
+            )
         {
+            myIXyComm.setTargetEndPoint(pRemoteEndPars);
+
             CommData commData = new CommData(XyPtoPCmd.PassiveRegist);
+            commData.cmdParDic = pLocalEndPars;
 
             return await sendData(commData);
         }
@@ -125,6 +149,9 @@ namespace xyDroidFolder.comm
 
         #endregion
     }
+
+    public delegate void
+        XyPtoPRequestHandler(CommData commData, CommResult commResult);
     public enum XyPtoPEndType { ActiveEnd, PassiveEnd }
     public enum XyPtoPCmd {
         PassiveRegist, 
