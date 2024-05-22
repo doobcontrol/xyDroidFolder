@@ -138,6 +138,7 @@ namespace xyDroidFolder
             {
                 treeView.BeginUpdate();
                 TreeNode tn = treeView.Nodes.Add(R.InitFolderNode);
+                tn.ImageIndex = 3;
                 tn.Tag = false;
                 treeView.EndUpdate();
                 treeView.Visible = true;
@@ -197,6 +198,8 @@ namespace xyDroidFolder
 
                     tn.Tag = true;
                     tv.EndUpdate();
+
+                    tn.Expand();
                 }
             }
         }

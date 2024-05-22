@@ -28,10 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             panel2 = new Panel();
             panel5 = new Panel();
             listView1 = new ListView();
             treeView1 = new TreeView();
+            imageList1 = new ImageList(components);
             panel3 = new Panel();
             panel4 = new Panel();
             btnExit = new Button();
@@ -78,11 +81,24 @@
             // treeView1
             // 
             treeView1.Dock = DockStyle.Left;
+            treeView1.ImageIndex = 0;
+            treeView1.ImageList = imageList1;
             treeView1.Location = new Point(0, 0);
             treeView1.Name = "treeView1";
+            treeView1.SelectedImageIndex = 0;
             treeView1.Size = new Size(256, 415);
             treeView1.TabIndex = 2;
             treeView1.NodeMouseClick += treeView1_NodeMouseClick;
+            // 
+            // imageList1
+            // 
+            imageList1.ColorDepth = ColorDepth.Depth32Bit;
+            imageList1.ImageStream = (ImageListStreamer)resources.GetObject("imageList1.ImageStream");
+            imageList1.TransparentColor = Color.Transparent;
+            imageList1.Images.SetKeyName(0, "Folder-icon.png");
+            imageList1.Images.SetKeyName(1, "Folder-Open-icon.png");
+            imageList1.Images.SetKeyName(2, "Document-icon.png");
+            imageList1.Images.SetKeyName(3, "android-icon.png");
             // 
             // panel3
             // 
@@ -172,5 +188,6 @@
         private Panel panel5;
         private TreeView treeView1;
         private ListView listView1;
+        private ImageList imageList1;
     }
 }
