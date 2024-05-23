@@ -40,12 +40,19 @@ namespace xyDroidFolder
 
             treeView1.Visible = false;
             listView1.Visible = false;
+            panelProgress.Visible = false;
+            labelProgress.Text = "0/0";
 
             panel1.Width = qrSize;
             pictureBox1.Height = qrSize;
 
             btnExit.Text = R.App_Exit;
+            btnDownload.Text = R.FileBtn_Download;
+            btnUpload.Text = R.FileBtn_Upload;
             label1.Text = R.ScanTitle;
+
+            btnDownload.Enabled = false;
+            btnUpload.Enabled = false;
 
             localIP = getLocalIp()[0];
 
@@ -75,7 +82,8 @@ namespace xyDroidFolder
             xyPtoPEnd = new XyPtoPEnd(
                 XyPtoPEndType.ActiveEnd,
                 pEndPars,
-                XyPtoPRequestHandler
+                XyPtoPRequestHandler,
+                FileEventHandler
                 );
 
         }
@@ -122,7 +130,7 @@ namespace xyDroidFolder
             {
                 case XyPtoPCmd.PassiveRegist:
                     initFoldTree(
-                        treeView1, 
+                        treeView1,
                         commData.cmdParDic[XyPtoPEnd.FolderparKey_hostName]);
                     break;
                 default:
@@ -134,8 +142,10 @@ namespace xyDroidFolder
         {
             if (treeView.InvokeRequired)
             {
-                treeView.Invoke(new Action(() => { 
-                    initFoldTree(treeView, hostName); }));
+                treeView.Invoke(new Action(() =>
+                {
+                    initFoldTree(treeView, hostName);
+                }));
             }
             else
             {
@@ -204,7 +214,7 @@ namespace xyDroidFolder
 
                     //show files
                     tn.Tag = files;
-                    showFiles(files);
+                    showFiles(tn);
                 }
                 else
                 {
@@ -242,12 +252,12 @@ namespace xyDroidFolder
 
                     //show files
                     tn.Tag = files;
-                    showFiles(files);
+                    showFiles(tn);
                 }
             }
             else
             {
-                showFiles(tn.Tag as string[]);
+                showFiles(tn);
             }
 
         }
@@ -267,9 +277,12 @@ namespace xyDroidFolder
             }
         }
 
-        private void showFiles(string[] files)
+        private void showFiles(TreeNode tn)
         {
             listView1.Clear();
+            btnDownload.Enabled = false;
+            listView1.Tag = tn;
+            string[] files = tn.Tag as string[];
 
             // Set the view to show details.
             listView1.View = View.List;
@@ -281,7 +294,81 @@ namespace xyDroidFolder
                 listView1.Items.Add(file);
             }
             listView1.Visible = true;
+        }
 
+        private async void btnDownload_ClickAsync(object sender, EventArgs e)
+        {
+            btnDownload.Enabled = false;
+
+            TreeNode tn = listView1.Tag as TreeNode;
+            string path = tn.FullPath.Replace(
+                treeView1.Tag.ToString() + "\\", "");
+            string file = listView1.SelectedItems[0].Text;
+
+            string requestfile = Path.Combine(path, file).Replace(
+                treeView1.Tag.ToString() + "\\", "");
+
+            string receivedPath = ".\\temp";
+            if (!Directory.Exists(receivedPath))
+            {
+                Directory.CreateDirectory(receivedPath);
+            }
+            string receivedFile = Path.Combine(receivedPath, file); ;
+
+            await xyPtoPEnd.ActiveGetFile(
+                    requestfile, receivedFile);
+
+            btnDownload.Enabled = true;
+        }
+
+        private void btnUpload_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count > 0)
+            {
+                btnDownload.Enabled = true;
+            }
+            else
+            {
+                btnDownload.Enabled = false;
+            }
+        }
+
+        private void FileEventHandler(object? sender, XyCommFileEventArgs e)
+        {
+            if (panelProgress.InvokeRequired)
+            {
+                panelProgress.Invoke(new Action(() => {
+                    FileEventHandler(sender, e);
+                }));
+            }
+            else
+            {
+                if (e.Progress == 0)
+                {
+                    progressBar1.Minimum = 0;
+                    progressBar1.Maximum = (int)e.Length;
+                    progressBar1.Value = 0;
+                    panelProgress.Visible = true;
+                }
+                else if (e.Progress == e.Length)
+                {
+                    panelProgress.Visible = false;
+                }
+                else if (progressBar1.Maximum > (int)e.Progress)
+                {
+                    progressBar1.Value = (int)e.Progress;
+                }
+                labelProgress.Text =
+                    "(" + ((float)progressBar1.Value / (float)progressBar1.Maximum)
+                    .ToString(("#0.00%")) + ") "
+                    + progressBar1.Value.ToString("##,#")
+                    + "/" + progressBar1.Maximum.ToString("##,#");
+            }
         }
     }
 }

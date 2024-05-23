@@ -41,6 +41,9 @@ namespace xyDroidFolder
             => ResourceManager.GetString("ScanTitle");
         static public string? InitFolderNode
             => ResourceManager.GetString("InitFolderNode");
-
+        static public string? FileBtn_Download
+            => ResourceManager.GetString("FileBtn_Download");
+        static public string? FileBtn_Upload
+            => ResourceManager.GetString("FileBtn_Upload");
     }
 }

@@ -79,6 +79,24 @@ namespace xyDroidFolder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download.
+        /// </summary>
+        internal static string FileBtn_Download {
+            get {
+                return ResourceManager.GetString("FileBtn_Download", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload.
+        /// </summary>
+        internal static string FileBtn_Upload {
+            get {
+                return ResourceManager.GetString("FileBtn_Upload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click to get initial folder content.
         /// </summary>
         internal static string InitFolderNode {

@@ -27,11 +27,20 @@ namespace xyDroidFolder.comm
 
         public XyUdpComm(Dictionary<string, string> workpars) {
 
-            IPEndPoint localEndPoint = new IPEndPoint(
+            IPEndPoint localChatEndPoint = new IPEndPoint(
                 IPAddress.Parse(workpars[workparKey_localIP]),
                 int.Parse(workpars[workparKey_localChatPort]));
 
-            udpChatServer = new UdpClient(localEndPoint);
+            udpChatServer = new UdpClient(localChatEndPoint);
+
+            IPEndPoint localStreamEndPoint = new IPEndPoint(
+                IPAddress.Parse(workpars[workparKey_localIP]),
+                int.Parse(workpars[workparKey_localStreamPort]));
+            udpStreamServer = new UdpClient(localStreamEndPoint);
+
+            int workBufferSize = 1024 * 32;
+            udpStreamServer.Client.ReceiveBufferSize = workBufferSize;
+            udpStreamServer.Client.SendBufferSize = workBufferSize;
 
             //配置socket参数，避免ICMP包导致的异常
             uint IOC_IN = 0x80000000;
@@ -72,9 +81,13 @@ namespace xyDroidFolder.comm
             send(sendString);
         }
 
-        public void sendFile(string sendFile)
+        public void sendStream(byte[] sendBytes, int sendLength)
         {
-            throw new NotImplementedException();
+            udpStreamServer.Send(
+                sendBytes,
+                sendLength,
+                targetStreamPoint
+                );
         }
 
         public void start(Dictionary<string, string> pars)
@@ -84,7 +97,7 @@ namespace xyDroidFolder.comm
 
         bool stopListen = true;
         private int sleepTime = 50;
-        public void startListen()
+        public void startChatListen()
         {
             stopListen = false;
             _ = Task.Run(
@@ -109,7 +122,59 @@ namespace xyDroidFolder.comm
 
                         XyCommEventHandler(
                             this, 
-                            new XyCommEventArgs(receivedBytes)
+                            new XyCommEventArgs(
+                                receivedBytes,
+                                XyCommEventMsgType.Chat)
+                            );
+
+                        Thread.Sleep(sleepTime);
+                    }
+                }
+                catch (ThreadAbortException te)
+                {
+                    //dReceivedEventHandler(
+                    //    PDMnetMsg.invalidPkgInfo
+                    //    + "=接收线程错误：" + te.Message + "-" + te.StackTrace);
+                    ////EventHandler(EventType.mErr, "已停止连接", null, null, null);
+                }
+                catch (Exception e)
+                {
+                    //dReceivedEventHandler(
+                    //    PDMnetMsg.invalidPkgInfo
+                    //    + "=接收线程错误：" + e.Message + "-" + e.StackTrace.Replace(",", "，"));
+                    ////EventHandler(EventType.oErr, e.Message, null, null, e);
+                }
+            }
+            );
+        }
+        public void startStreamListen()
+        {
+            stopListen = false;
+            _ = Task.Run(
+            () =>
+            {
+                try
+                {
+                    while (!stopListen)
+                    {
+                        while (!stopListen && udpStreamServer.Available == 0)
+                        {
+                            Thread.Sleep(sleepTime);
+                        }
+                        if (stopListen)
+                        {
+                            break;
+                        }
+
+                        IPEndPoint tempPoint = new IPEndPoint(IPAddress.Any, 0);
+                        byte[] receivedBytes
+                            = udpStreamServer.Receive(ref tempPoint); //??
+
+                        XyCommEventHandler(
+                            this,
+                            new XyCommEventArgs(
+                                receivedBytes,
+                                XyCommEventMsgType.Stream)
                             );
 
                         Thread.Sleep(sleepTime);

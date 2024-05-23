@@ -123,6 +123,12 @@
   <data name="App_Exit" xml:space="preserve">
     <value>退出</value>
   </data>
+  <data name="FileBtn_Download" xml:space="preserve">
+    <value>下载</value>
+  </data>
+  <data name="FileBtn_Upload" xml:space="preserve">
+    <value>上传</value>
+  </data>
   <data name="InitFolderNode" xml:space="preserve">
     <value>点击获取初始目录内容</value>
   </data>

@@ -36,14 +36,22 @@
             treeView1 = new TreeView();
             imageList1 = new ImageList(components);
             panel3 = new Panel();
+            panelProgress = new Panel();
+            progressBar1 = new ProgressBar();
+            panel6 = new Panel();
+            btnDownload = new Button();
+            btnUpload = new Button();
             panel4 = new Panel();
             btnExit = new Button();
             panel1 = new Panel();
             pictureBox1 = new PictureBox();
             label1 = new Label();
+            labelProgress = new Label();
             panel2.SuspendLayout();
             panel5.SuspendLayout();
             panel3.SuspendLayout();
+            panelProgress.SuspendLayout();
+            panel6.SuspendLayout();
             panel4.SuspendLayout();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -77,6 +85,7 @@
             listView1.Size = new Size(344, 415);
             listView1.TabIndex = 1;
             listView1.UseCompatibleStateImageBehavior = false;
+            listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
             // 
             // treeView1
             // 
@@ -102,12 +111,63 @@
             // 
             // panel3
             // 
+            panel3.Controls.Add(panelProgress);
+            panel3.Controls.Add(panel6);
             panel3.Controls.Add(panel4);
             panel3.Dock = DockStyle.Bottom;
             panel3.Location = new Point(0, 415);
             panel3.Name = "panel3";
             panel3.Size = new Size(600, 35);
             panel3.TabIndex = 0;
+            // 
+            // panelProgress
+            // 
+            panelProgress.Controls.Add(progressBar1);
+            panelProgress.Controls.Add(labelProgress);
+            panelProgress.Dock = DockStyle.Fill;
+            panelProgress.Location = new Point(169, 0);
+            panelProgress.Name = "panelProgress";
+            panelProgress.Padding = new Padding(3);
+            panelProgress.Size = new Size(341, 35);
+            panelProgress.TabIndex = 4;
+            // 
+            // progressBar1
+            // 
+            progressBar1.Dock = DockStyle.Fill;
+            progressBar1.Location = new Point(3, 3);
+            progressBar1.Name = "progressBar1";
+            progressBar1.Size = new Size(335, 12);
+            progressBar1.TabIndex = 0;
+            // 
+            // panel6
+            // 
+            panel6.Controls.Add(btnDownload);
+            panel6.Controls.Add(btnUpload);
+            panel6.Dock = DockStyle.Left;
+            panel6.Location = new Point(0, 0);
+            panel6.Name = "panel6";
+            panel6.Size = new Size(169, 35);
+            panel6.TabIndex = 3;
+            // 
+            // btnDownload
+            // 
+            btnDownload.Location = new Point(6, 3);
+            btnDownload.Name = "btnDownload";
+            btnDownload.Size = new Size(75, 23);
+            btnDownload.TabIndex = 1;
+            btnDownload.Text = "btnDownload";
+            btnDownload.UseVisualStyleBackColor = true;
+            btnDownload.Click += btnDownload_ClickAsync;
+            // 
+            // btnUpload
+            // 
+            btnUpload.Location = new Point(87, 3);
+            btnUpload.Name = "btnUpload";
+            btnUpload.Size = new Size(75, 23);
+            btnUpload.TabIndex = 2;
+            btnUpload.Text = "btnUpload";
+            btnUpload.UseVisualStyleBackColor = true;
+            btnUpload.Click += btnUpload_Click;
             // 
             // panel4
             // 
@@ -124,7 +184,7 @@
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(75, 23);
             btnExit.TabIndex = 0;
-            btnExit.Text = "button1";
+            btnExit.Text = "btnExit";
             btnExit.UseVisualStyleBackColor = true;
             btnExit.Click += btnExit_Click;
             // 
@@ -157,6 +217,16 @@
             label1.Text = "label1";
             label1.TextAlign = ContentAlignment.TopCenter;
             // 
+            // labelProgress
+            // 
+            labelProgress.Dock = DockStyle.Bottom;
+            labelProgress.Location = new Point(3, 15);
+            labelProgress.Name = "labelProgress";
+            labelProgress.Size = new Size(335, 17);
+            labelProgress.TabIndex = 1;
+            labelProgress.Text = "label2";
+            labelProgress.TextAlign = ContentAlignment.TopCenter;
+            // 
             // FrmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
@@ -170,6 +240,8 @@
             panel2.ResumeLayout(false);
             panel5.ResumeLayout(false);
             panel3.ResumeLayout(false);
+            panelProgress.ResumeLayout(false);
+            panel6.ResumeLayout(false);
             panel4.ResumeLayout(false);
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
@@ -189,5 +261,11 @@
         private TreeView treeView1;
         private ListView listView1;
         private ImageList imageList1;
+        private Button btnUpload;
+        private Button btnDownload;
+        private Panel panelProgress;
+        private ProgressBar progressBar1;
+        private Panel panel6;
+        private Label labelProgress;
     }
 }

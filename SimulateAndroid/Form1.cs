@@ -11,11 +11,13 @@ namespace SimulateAndroid
         {
             InitializeComponent();
             Text = "SimulateAndroid";
+            panelProgress.Visible= false;
+            labelProgress.Text = "0/0";
         }
 
         private async void button1_Click(object sender, EventArgs e)
         {
-            label1.Text = "start regist ……";
+            showMsg("start regist ……");
 
             Dictionary<string, string> pLocalEndPars 
                 = new Dictionary<string, string>();
@@ -26,7 +28,8 @@ namespace SimulateAndroid
             xyPtoPEnd = new XyPtoPEnd(
                     XyPtoPEndType.PassiveEnd,
                     pLocalEndPars, 
-                    XyPtoPRequestHandler);
+                    XyPtoPRequestHandler,
+                    FileEventHandler);
 
             //因用于对方配置远程地址，因此人使用remote key
             pLocalEndPars
@@ -52,19 +55,19 @@ namespace SimulateAndroid
 
                 if (registResult.errorCmdID)
                 {
-                    label1.Text = "Comm error";
+                    showMsg("Comm error");
                 }
                 else if (!registResult.cmdSucceed)
                 {
-                    label1.Text = "Regist error:" + registResult.resultDataDic[
+                    showMsg("Regist error: " + registResult.resultDataDic[
                         CommResult.resultDataKey_ErrorInfo
-                        ];
+                        ]);
                 }
                 else
                 {
-                    label1.Text = registResult.resultDataDic[
+                    showMsg(registResult.resultDataDic[
                         CommResult.resultDataKey_ActiveEndInfo
-                        ];
+                        ]);
                 }
                 button1.Enabled = false;
             }
@@ -75,10 +78,10 @@ namespace SimulateAndroid
             }
         }
 
-        string path = "C:\\DepGitHub\\xyDroidFolder";
+        string path = "C:\\";
         private void XyPtoPRequestHandler(CommData commData, CommResult commResult)
         {
-            showMsg("in request:" + commData.cmd.ToString());
+            showMsg("in request: " + commData.cmd.ToString());
             string[] subdirectoryEntries;
             string folderStr = "";
             string[] fileEntries;
@@ -113,7 +116,7 @@ namespace SimulateAndroid
                     commResult.resultDataDic.Add(
                         XyPtoPEnd.FolderparKey_files, fileStr);
                     ;
-                    showMsg("sent folder info:" + path);
+                    showMsg("sent folder info: " + path);
 
                     break;
                 case XyPtoPCmd.ActiveGetFolder:
@@ -146,22 +149,68 @@ namespace SimulateAndroid
                     commResult.resultDataDic.Add(
                         XyPtoPEnd.FolderparKey_files, fileStr);
                     ;
-                    showMsg("sent folder info:" + reqPath);
+                    showMsg("sent folder info: " + reqPath);
 
                     break;
+                case XyPtoPCmd.ActiveGetFile:
+                    string requestfile = Path.Combine(
+                            path,
+                            commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfile]);
+
+                    commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfile]
+                        = requestfile;
+
+                    showMsg("start send file: " + requestfile);
+
+                    break;
+
                 default:
                     break;
             }
         }
         private void showMsg(string msg)
         {
-            if (label1.InvokeRequired)
+            if (textBox1.InvokeRequired)
             {
-                label1.Invoke(new Action(() => { showMsg(msg); }));
+                textBox1.Invoke(new Action(() => { showMsg(msg); }));
             }
             else
             {
-                label1.Text = msg;
+                textBox1.AppendText(DateTime.Now.ToString("HH:mm:ss") + " - "
+                    + msg + Environment.NewLine);
+            }
+        }
+        
+        private void FileEventHandler(object? sender, XyCommFileEventArgs e)
+        {
+            if (panelProgress.InvokeRequired)
+            {
+                panelProgress.Invoke(new Action(() => {
+                    FileEventHandler(sender, e);
+                }));
+            }
+            else
+            {
+                if (e.Progress == 0)
+                {
+                    progressBar1.Minimum = 0;
+                    progressBar1.Maximum = (int)e.Length;
+                    progressBar1.Value = 0;
+                    panelProgress.Visible = true;
+                }
+                else if (e.Progress == e.Length)
+                {
+                    panelProgress.Visible = false;
+                }
+                else if (progressBar1.Maximum > (int)e.Progress)
+                {
+                    progressBar1.Value = (int)e.Progress;
+                }
+                labelProgress.Text = 
+                    "(" + ((float)progressBar1.Value / (float)progressBar1.Maximum)
+                    .ToString(("#0.00%")) + ") "
+                    + progressBar1.Value.ToString("##,#") 
+                    + "/" + progressBar1.Maximum.ToString("##,#");
             }
         }
     }

@@ -12,12 +12,20 @@ namespace xyDroidFolder.comm
         void start(Dictionary<string, string> pars);
         void send(string sendData);
         void send(Dictionary<string, string> sendDic);
-        void sendFile(string sendFile);
-        void startListen();
+        void sendStream(byte[] sendBytes, int sendLength);
+        void startChatListen();
+        void startStreamListen();
         void setTargetEndPoint(Dictionary<string, string> pEndPars);
         void setCommEventHandler(
             EventHandler<XyCommEventArgs> XyCommEventHandler
             );
         void clean();
+    }
+    public enum XyCommSendParKey
+    {
+        PassiveRegist,
+        ActiveGetInitFolder,
+        ActiveGetFolder,
+        ActiveGetFile
     }
 }
