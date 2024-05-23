@@ -145,7 +145,6 @@ namespace xyDroidFolder
                     hostName + "(" + R.InitFolderNode + ")");
                 tn.ImageIndex = 3;
                 tn.SelectedImageIndex = 3;
-                tn.Tag = false;
                 treeView.EndUpdate();
                 treeView.Visible = true;
             }
@@ -171,13 +170,14 @@ namespace xyDroidFolder
         {
             TreeNode tn = e.Node;
             TreeView tv = sender as TreeView;
-            if (tn.Level == 0 )
+
+
+            if (NodeNeedGet(tn))
             {
-                if(!(bool)tn.Tag)
+                if (tn.Level == 0)
                 {
                     CommResult commResult =
                         await xyPtoPEnd.ActiveGetInitFolder();
-
 
                     string[] folders = commResult.resultDataDic[
                         XyPtoPEnd.FolderparKey_folders
@@ -194,26 +194,22 @@ namespace xyDroidFolder
                         if (folder != "")
                         {
                             TempTn = tn.Nodes.Add(folder);
-                            TempTn.Tag = false;
                         }
                     }
 
-                    tn.Tag = true;
                     tn.Text = tv.Tag.ToString();
                     tv.EndUpdate();
 
                     tn.Expand();
 
                     //show files
+                    tn.Tag = files;
                     showFiles(files);
                 }
-            }
-            else
-            {
-                if (!(bool)tn.Tag)
+                else
                 {
                     string path = tn.FullPath.Replace(
-                        tv.Tag.ToString() + "\\","");
+                        tv.Tag.ToString() + "\\", "");
 
                     CommResult commResult =
                         await xyPtoPEnd.ActiveGetFolder(path);
@@ -234,21 +230,40 @@ namespace xyDroidFolder
                         if (folder != "")
                         {
                             TempTn = tn.Nodes.Add(folder);
-                            TempTn.Tag = false;
                         }
                     }
 
-                    tn.Tag = true;
                     tv.EndUpdate();
 
-                    if(folders.Length > 0)
+                    if (folders.Length > 0)
                     {
                         tn.Expand();
                     }
 
                     //show files
+                    tn.Tag = files;
                     showFiles(files);
                 }
+            }
+            else
+            {
+                showFiles(tn.Tag as string[]);
+            }
+
+        }
+        private bool NodeNeedGet(TreeNode tn)
+        {
+            if (tn.Tag == null)
+            {
+                return true;
+            }
+            else if (tn.Tag is string[])
+            {
+                return false;
+            }
+            else
+            {
+                return true;
             }
         }
 
