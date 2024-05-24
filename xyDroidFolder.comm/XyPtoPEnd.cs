@@ -102,7 +102,29 @@ namespace xyDroidFolder.comm
                                 );
 
                             //start send file task
-                            sendFile(commData);
+                            string sendfile =
+                                commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfile];
+                            sendFile(sendfile);
+
+                            break;
+                        case XyPtoPCmd.ActiveSendFile:
+                            _xyPtoPRequestHandler(commData, commResult);
+                            string localFileName
+                                = commData.cmdParDic[
+                                    XyPtoPEnd.FolderparKey_sendfile];
+                            
+                            //ready to receive file
+                            prepareReceive(localFileName);
+
+                            totleSendFileLength = long.Parse(
+                                commData.cmdParDic[FolderparKey_filelength]);
+                            _xyPtoPFileEventHandler(
+                                this,
+                                new XyCommFileEventArgs(
+                                    XyCommFileSendReceive.Receive,
+                                    totleSendFileLength,
+                                    0)
+                                );
 
                             break;
 
@@ -223,10 +245,8 @@ namespace xyDroidFolder.comm
         }
 
         private long receivedSentBytes = 0;
-        private void sendFile(CommData commData)
+        private void sendFile(string sendfile)
         {
-            string sendfile = 
-                commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfile];
             receivedSentBytes = 0;
             _ = Task.Run(
             () =>
@@ -290,6 +310,7 @@ namespace xyDroidFolder.comm
         static public string FolderparKey_hostName = "hostName";
         static public string FolderparKey_requestfolder = "requestfolder";
         static public string FolderparKey_requestfile = "requestfile";
+        static public string FolderparKey_sendfile = "sendfile";
         static public string FolderparKey_filelength = "filelength";
         static public string FolderparKey_fileprogress = "fileprogress";
         public async Task<CommResult> ActiveGetInitFolder()
@@ -306,6 +327,7 @@ namespace xyDroidFolder.comm
 
             return await sendData(commData);
         }
+        
         public async Task ActiveGetFile(
             string requestFile,
             string receivedFile)
@@ -314,12 +336,8 @@ namespace xyDroidFolder.comm
             commData.cmdParDic.Add(
                 FolderparKey_requestfile, requestFile);
 
-            Dictionary<string, string>? sendPars
-                = new Dictionary<string, string>();
-            sendPars.Add("", receivedFile);
-
             //ready to receive file
-            prepareReceive(commData, receivedFile);
+            prepareReceive(receivedFile);
 
             CommResult sendCommandResult = await sendData(commData);
 
@@ -333,21 +351,22 @@ namespace xyDroidFolder.comm
                     0)
                 );
 
-            await new Task(() => { 
-                
+            await Task.Run(() => {
+                //wait file recevied, then return 
+                while (inFileReceive)
+                {
+                    Thread.Sleep(sleepTime);
+                }
             });
         }
-
         bool inFileReceive = false;
-        CommData? receivedFileCommData = null;
         string? receivedFileName = null;
         FileStream receiveFileStream;
         long receviedLength = 0;
         long totleSendFileLength = 0;
-        private void prepareReceive(CommData commData, string receivedFile)
+        private void prepareReceive(string receivedFile)
         {
             inFileReceive = true;
-            receivedFileCommData = commData;
             receivedFileName = receivedFile;
             receviedLength = 0;
             totleSendFileLength = 0;
@@ -361,7 +380,6 @@ namespace xyDroidFolder.comm
         {
 
             inFileReceive = false;
-            receivedFileCommData = null;
             receivedFileName = null;
             if (receiveFileStream != null)
             {
@@ -369,6 +387,41 @@ namespace xyDroidFolder.comm
             }
             receviedLength = 0;
             totleSendFileLength = 0;
+        }
+
+        public async Task ActiveSendFile(
+            string localFile,
+            string remoteFile)
+        {
+            CommData commData = new CommData(XyPtoPCmd.ActiveSendFile);
+            commData.cmdParDic.Add(
+                FolderparKey_sendfile, remoteFile);
+
+            totleSendFileLength = new FileInfo(localFile).Length;
+            commData.cmdParDic.Add(
+                FolderparKey_filelength, totleSendFileLength.ToString());
+
+            _xyPtoPFileEventHandler(
+                this,
+                new XyCommFileEventArgs(
+                    XyCommFileSendReceive.Send,
+                    totleSendFileLength,
+                    0)
+                );
+
+            CommResult sendCommandResult = await sendData(commData);
+
+            //start send file task
+            sendFile(localFile);
+
+            await Task.Run(() => {
+                //wait file sent, then return 
+                while (totleSendFileLength != receivedSentBytes)
+                {
+                    Thread.Sleep(sleepTime);
+                }
+            });
+
         }
 
         #endregion
@@ -401,6 +454,7 @@ namespace xyDroidFolder.comm
         ActiveGetInitFolder,
         ActiveGetFolder,
         ActiveGetFile,
+        ActiveSendFile,
         FileReceivedConfim
     }
 }

@@ -259,7 +259,7 @@ namespace xyDroidFolder
             {
                 showFiles(tn);
             }
-
+            btnUpload.Enabled = true;
         }
         private bool NodeNeedGet(TreeNode tn)
         {
@@ -298,11 +298,13 @@ namespace xyDroidFolder
 
         private async void btnDownload_ClickAsync(object sender, EventArgs e)
         {
-            btnDownload.Enabled = false;
+            panel4.Enabled = false;
+            panel5.Enabled = false;
+            panel6.Enabled = false;
+            ControlBox = false;
 
             TreeNode tn = listView1.Tag as TreeNode;
-            string path = tn.FullPath.Replace(
-                treeView1.Tag.ToString() + "\\", "");
+            string path = tn.FullPath;
             string file = listView1.SelectedItems[0].Text;
 
             string requestfile = Path.Combine(path, file).Replace(
@@ -318,12 +320,40 @@ namespace xyDroidFolder
             await xyPtoPEnd.ActiveGetFile(
                     requestfile, receivedFile);
 
-            btnDownload.Enabled = true;
+            panel4.Enabled = true;
+            panel5.Enabled = true;
+            panel6.Enabled = true;
+            ControlBox = true;
         }
 
-        private void btnUpload_Click(object sender, EventArgs e)
+        private async void btnUpload_Click(object sender, EventArgs e)
         {
+            FileDialog dlg = new OpenFileDialog();
+            if(dlg.ShowDialog() ==DialogResult.OK)
+            {
+                panel4.Enabled = false;
+                panel5.Enabled = false;
+                panel6.Enabled = false;
+                ControlBox = false;
 
+                string localFile = dlg.FileName;
+
+                TreeNode tn = listView1.Tag as TreeNode;
+                string path = tn.FullPath;
+
+                string remoteFile = Path.Combine(
+                    path, Path.GetFileName(dlg.FileName)
+                    )
+                    .Replace(treeView1.Tag.ToString() + "\\", "");
+
+                await xyPtoPEnd.ActiveSendFile(
+                        localFile, remoteFile);
+
+                panel4.Enabled = true;
+                panel5.Enabled = true;
+                panel6.Enabled = true;
+                ControlBox = true;
+            }
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -357,13 +387,16 @@ namespace xyDroidFolder
                 }
                 else if (e.Progress == e.Length)
                 {
+                    progressBar1.Minimum = 0;
+                    progressBar1.Maximum = 0;
+                    progressBar1.Value = 0;
                     panelProgress.Visible = false;
                 }
                 else if (progressBar1.Maximum > (int)e.Progress)
                 {
                     progressBar1.Value = (int)e.Progress;
                 }
-                labelProgress.Text =
+                labelProgress.Text = e.FileSendReceive.ToString() + ": " +
                     "(" + ((float)progressBar1.Value / (float)progressBar1.Maximum)
                     .ToString(("#0.00%")) + ") "
                     + progressBar1.Value.ToString("##,#")

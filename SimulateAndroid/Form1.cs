@@ -163,6 +163,17 @@ namespace SimulateAndroid
                     showMsg("start send file: " + requestfile);
 
                     break;
+                case XyPtoPCmd.ActiveSendFile:
+                    string sendfile = Path.Combine(
+                            path,
+                            commData.cmdParDic[XyPtoPEnd.FolderparKey_sendfile]);
+
+                    commData.cmdParDic[XyPtoPEnd.FolderparKey_sendfile]
+                        = sendfile;
+
+                    showMsg("ready to receive file: " + sendfile);
+
+                    break;
 
                 default:
                     break;
@@ -200,13 +211,16 @@ namespace SimulateAndroid
                 }
                 else if (e.Progress == e.Length)
                 {
+                    progressBar1.Minimum = 0;
+                    progressBar1.Maximum = 0;
+                    progressBar1.Value = 0;
                     panelProgress.Visible = false;
                 }
                 else if (progressBar1.Maximum > (int)e.Progress)
                 {
                     progressBar1.Value = (int)e.Progress;
                 }
-                labelProgress.Text = 
+                labelProgress.Text = e.FileSendReceive.ToString() + ": " +
                     "(" + ((float)progressBar1.Value / (float)progressBar1.Maximum)
                     .ToString(("#0.00%")) + ") "
                     + progressBar1.Value.ToString("##,#") 
