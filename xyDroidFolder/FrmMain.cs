@@ -15,18 +15,17 @@ using xyDroidFolder.comm;
 using System.Diagnostics;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using TreeView = System.Windows.Forms.TreeView;
+using ComboBox = System.Windows.Forms.ComboBox;
 
 namespace xyDroidFolder
 {
     public partial class FrmMain : Form
     {
-        bool isDebug = true;
+        bool isDebug = false; //true / false
 
         int qrSize = 200;
         int chatPort = 12919;
         int streamPort = 12920;
-
-        string localIP;
 
         XyPtoPEnd xyPtoPEnd;
 
@@ -54,17 +53,6 @@ namespace xyDroidFolder
             btnDownload.Enabled = false;
             btnUpload.Enabled = false;
 
-            localIP = getLocalIp()[0];
-
-            try
-            {
-                pictureBox1.Image = getQRImage(localIP, chatPort, streamPort);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
-
             if (isDebug)
             {
                 runEmulator();
@@ -72,6 +60,24 @@ namespace xyDroidFolder
         }
 
         private void FrmMain_Load(object sender, EventArgs e)
+        {
+            getLocalIp();
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox1.SelectedIndexChanged += localIP_SelectedIndexChanged;
+            comboBox1.SelectedIndex = 0;
+        }
+        private void localIP_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox cb = sender as ComboBox;
+            if (cb.SelectedIndex != -1)
+            {
+                setLocalIpEndPoint(
+                    cb.Items[cb.SelectedIndex].ToString()
+                    );
+            }
+        }
+
+        private void setLocalIpEndPoint(string localIP)
         {
             Dictionary<string, string> pEndPars
                 = new Dictionary<string, string>();
@@ -86,6 +92,14 @@ namespace xyDroidFolder
                 FileEventHandler
                 );
 
+            try
+            {
+                pictureBox1.Image = getQRImage(localIP, chatPort, streamPort);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
         private Bitmap getQRImage(
@@ -106,22 +120,20 @@ namespace xyDroidFolder
             return retImg;
         }
 
-        private List<string> getLocalIp()
+        private void getLocalIp()
         {
             string host = Dns.GetHostName();
 
             // Getting ip address using host name 
             IPHostEntry ip = Dns.GetHostEntry(host);
 
-            List<string> ipList = new List<string>();
             foreach (var item in ip.AddressList)
             {
                 if (item.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    ipList.Add(item.ToString());
+                    comboBox1.Items.Add(item.ToString());
                 }
             }
-            return ipList;
         }
 
         private void XyPtoPRequestHandler(CommData commData, CommResult commResult)

@@ -7,6 +7,13 @@ namespace SimulateAndroid
     {
         XyPtoPEnd xyPtoPEnd;
 
+        string localIP = "192.168.168.129";
+        string localChatPort = "12921";
+        string localStreamPort = "12922";
+        string remoteIP = "192.168.168.1";
+        string remoteChatPort = "12919";
+        string remoteStreamPort = "12920";
+
         public Form1()
         {
             InitializeComponent();
@@ -21,9 +28,9 @@ namespace SimulateAndroid
 
             Dictionary<string, string> pLocalEndPars 
                 = new Dictionary<string, string>();
-            pLocalEndPars.Add(XyUdpComm.workparKey_localIP, "192.168.168.129");
-            pLocalEndPars.Add(XyUdpComm.workparKey_localChatPort, "12921");
-            pLocalEndPars.Add(XyUdpComm.workparKey_localStreamPort, "12922");
+            pLocalEndPars.Add(XyUdpComm.workparKey_localIP, localIP);
+            pLocalEndPars.Add(XyUdpComm.workparKey_localChatPort, localChatPort);
+            pLocalEndPars.Add(XyUdpComm.workparKey_localStreamPort, localStreamPort);
 
             xyPtoPEnd = new XyPtoPEnd(
                     XyPtoPEndType.PassiveEnd,
@@ -31,20 +38,20 @@ namespace SimulateAndroid
                     XyPtoPRequestHandler,
                     FileEventHandler);
 
-            //因用于对方配置远程地址，因此人使用remote key
+            //因用于对方配置远程地址，因此仍使用remote key
             pLocalEndPars
                 = new Dictionary<string, string>();
-            pLocalEndPars.Add(XyUdpComm.workparKey_remoteIP, "192.168.168.129");
-            pLocalEndPars.Add(XyUdpComm.workparKey_remoteChatPort, "12921");
-            pLocalEndPars.Add(XyUdpComm.workparKey_remoteStreamPort, "12922");
+            pLocalEndPars.Add(XyUdpComm.workparKey_remoteIP, localIP);
+            pLocalEndPars.Add(XyUdpComm.workparKey_remoteChatPort, localChatPort);
+            pLocalEndPars.Add(XyUdpComm.workparKey_remoteStreamPort, localStreamPort);
             pLocalEndPars.Add(XyPtoPEnd.FolderparKey_hostName,
                 System.Environment.MachineName);
 
             Dictionary<string, string> pRemoteEndPars
                 = new Dictionary<string, string>();
-            pRemoteEndPars.Add(XyUdpComm.workparKey_remoteIP, "192.168.168.129");
-            pRemoteEndPars.Add(XyUdpComm.workparKey_remoteChatPort, "12919");
-            pRemoteEndPars.Add(XyUdpComm.workparKey_remoteStreamPort, "12920");
+            pRemoteEndPars.Add(XyUdpComm.workparKey_remoteIP, remoteIP);
+            pRemoteEndPars.Add(XyUdpComm.workparKey_remoteChatPort, remoteChatPort);
+            pRemoteEndPars.Add(XyUdpComm.workparKey_remoteStreamPort, remoteStreamPort);
 
             try
             {

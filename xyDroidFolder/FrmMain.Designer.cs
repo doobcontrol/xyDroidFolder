@@ -38,15 +38,16 @@
             panel3 = new Panel();
             panelProgress = new Panel();
             progressBar1 = new ProgressBar();
+            labelProgress = new Label();
             panel6 = new Panel();
             btnDownload = new Button();
             btnUpload = new Button();
             panel4 = new Panel();
             btnExit = new Button();
             panel1 = new Panel();
+            comboBox1 = new ComboBox();
             pictureBox1 = new PictureBox();
             label1 = new Label();
-            labelProgress = new Label();
             panel2.SuspendLayout();
             panel5.SuspendLayout();
             panel3.SuspendLayout();
@@ -139,6 +140,16 @@
             progressBar1.Size = new Size(335, 12);
             progressBar1.TabIndex = 0;
             // 
+            // labelProgress
+            // 
+            labelProgress.Dock = DockStyle.Bottom;
+            labelProgress.Location = new Point(3, 15);
+            labelProgress.Name = "labelProgress";
+            labelProgress.Size = new Size(335, 17);
+            labelProgress.TabIndex = 1;
+            labelProgress.Text = "label2";
+            labelProgress.TextAlign = ContentAlignment.TopCenter;
+            // 
             // panel6
             // 
             panel6.Controls.Add(btnDownload);
@@ -190,42 +201,43 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(comboBox1);
             panel1.Controls.Add(pictureBox1);
             panel1.Controls.Add(label1);
             panel1.Dock = DockStyle.Left;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
+            panel1.Padding = new Padding(3, 0, 0, 0);
             panel1.Size = new Size(200, 450);
             panel1.TabIndex = 2;
+            // 
+            // comboBox1
+            // 
+            comboBox1.Dock = DockStyle.Top;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new Point(3, 67);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(197, 25);
+            comboBox1.TabIndex = 2;
             // 
             // pictureBox1
             // 
             pictureBox1.Dock = DockStyle.Top;
-            pictureBox1.Location = new Point(0, 17);
+            pictureBox1.Location = new Point(3, 17);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(200, 50);
+            pictureBox1.Size = new Size(197, 50);
             pictureBox1.TabIndex = 1;
             pictureBox1.TabStop = false;
             // 
             // label1
             // 
             label1.Dock = DockStyle.Top;
-            label1.Location = new Point(0, 0);
+            label1.Location = new Point(3, 0);
             label1.Name = "label1";
-            label1.Size = new Size(200, 17);
+            label1.Size = new Size(197, 17);
             label1.TabIndex = 1;
             label1.Text = "label1";
             label1.TextAlign = ContentAlignment.TopCenter;
-            // 
-            // labelProgress
-            // 
-            labelProgress.Dock = DockStyle.Bottom;
-            labelProgress.Location = new Point(3, 15);
-            labelProgress.Name = "labelProgress";
-            labelProgress.Size = new Size(335, 17);
-            labelProgress.TabIndex = 1;
-            labelProgress.Text = "label2";
-            labelProgress.TextAlign = ContentAlignment.TopCenter;
             // 
             // FrmMain
             // 
@@ -267,5 +279,6 @@
         private ProgressBar progressBar1;
         private Panel panel6;
         private Label labelProgress;
+        private ComboBox comboBox1;
     }
 }
