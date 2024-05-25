@@ -13,6 +13,10 @@ namespace xyDroidFolder.comm
         void send(string sendData);
         void send(Dictionary<string, string> sendDic);
         void sendStream(byte[] sendBytes, int sendLength);
+        Task<bool> sendNumberedStream(
+            byte[] sendBytes, 
+            int sendLength, 
+            Int64 sendNumber);
         void startChatListen();
         void startStreamListen();
         void setTargetEndPoint(Dictionary<string, string> pEndPars);

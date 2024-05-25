@@ -104,7 +104,7 @@ namespace xyDroidFolder.comm
                             //start send file task
                             string sendfile =
                                 commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfile];
-                            sendFile(sendfile);
+                            _ = sendFileAsync(sendfile);
 
                             break;
                         case XyPtoPCmd.ActiveSendFile:
@@ -114,7 +114,7 @@ namespace xyDroidFolder.comm
                                     XyPtoPEnd.FolderparKey_sendfile];
                             
                             //ready to receive file
-                            prepareReceive(localFileName);
+                            ReceiveFile(localFileName);
 
                             totleSendFileLength = long.Parse(
                                 commData.cmdParDic[FolderparKey_filelength]);
@@ -128,23 +128,6 @@ namespace xyDroidFolder.comm
 
                             break;
 
-                        //file send confim
-                        case XyPtoPCmd.FileReceivedConfim:
-                            receivedSentBytes = long.Parse(
-                                commData.cmdParDic[
-                                    XyPtoPEnd.FolderparKey_fileprogress]);
-
-                            _xyPtoPFileEventHandler(
-                                this,
-                                new XyCommFileEventArgs(
-                                    XyCommFileSendReceive.Send,
-                                    totleSendFileLength,
-                                    receivedSentBytes
-                                    )
-                                );
-
-                            break;
-
                         default:
                             commResult.resultDataDic.Add(
                                 CommResult.resultDataKey_ErrorInfo,
@@ -153,7 +136,7 @@ namespace xyDroidFolder.comm
                             break;
                     }
 
-                    sendResult(commResult);
+                    myIXyComm.send(commResult.toCommDic());
                 }
                 else
                 {
@@ -163,39 +146,35 @@ namespace xyDroidFolder.comm
             }
             else
             {
-                if (inFileReceive)
+                if (receivedByteArrs != null)
                 {
-                    int receivedNum = e.ReceivedBytes.Length;
-                    receviedLength += receivedNum;
-                    receiveFileStream.Write(
-                        e.ReceivedBytes, 
-                        0,
-                        receivedNum);
+                    int receivedNum = e.ReceivedBytes.Length - 8;
 
-                    _xyPtoPFileEventHandler(
-                        this,
-                        new XyCommFileEventArgs(
-                            XyCommFileSendReceive.Receive,
-                            totleSendFileLength,
-                            receviedLength
-                            )
-                        );
+                    byte[] pkgID = new byte[8];
+                    pkgID[0] = e.ReceivedBytes[receivedNum - 8];
+                    pkgID[1] = e.ReceivedBytes[receivedNum - 7];
+                    pkgID[2] = e.ReceivedBytes[receivedNum - 6];
+                    pkgID[3] = e.ReceivedBytes[receivedNum - 5];
+                    pkgID[4] = e.ReceivedBytes[receivedNum - 4];
+                    pkgID[5] = e.ReceivedBytes[receivedNum - 3];
+                    pkgID[6] = e.ReceivedBytes[receivedNum - 2];
+                    pkgID[7] = e.ReceivedBytes[receivedNum - 1];
 
-                    CommData fileReceivedCommData
-                        = new CommData(XyPtoPCmd.FileReceivedConfim);
-                    fileReceivedCommData.cmdParDic.
-                        Add(FolderparKey_fileprogress, receviedLength.ToString());
+                    Int64 pkgIDNumber = BitConverter.ToInt64(pkgID);
 
-                    myIXyComm.send(fileReceivedCommData.toCommDic());
-
-                    if(totleSendFileLength == receviedLength)
+                    lock (receivedByteArrs)
                     {
-                        finishReceive();
+                        if (pkgIDNumber >= WaitedPkgID
+                            && !receivedByteArrs.ContainsKey(pkgIDNumber))
+                        {
+                            receivedByteArrs.Add(pkgIDNumber, e.ReceivedBytes);
+                        }
                     }
                 }
             }
 
         }
+
         public void clean()
         {
             if (myIXyComm != null)
@@ -239,65 +218,145 @@ namespace xyDroidFolder.comm
             return taskResult;
         }
 
-        private void sendResult(CommResult commResult)
-        {
-            myIXyComm.send(commResult.toCommDic());
-        }
-
         private long receivedSentBytes = 0;
-        private void sendFile(string sendfile)
+        private async Task sendFileAsync(string sendfile)
         {
+            int maxBufferTaskCount = 50;
+            int maxSendTaskCount = 30;
+
+            List<fileSendTask> sendTaskDataList
+                = new List<fileSendTask>();
+            Dictionary<Int64, fileSendTask> inSendTaskDataDic 
+                = new Dictionary<long, fileSendTask>();
+
+            Dictionary<Int64, Task> sendTasksDic 
+                = new Dictionary<Int64, Task>();
+
             receivedSentBytes = 0;
-            _ = Task.Run(
-            () =>
+
+            await Task.Run(
+            async Task () =>
             {
                 try
                 {
                     int sendLength = 1024 * 32;
-                    byte[] filechunk = new byte[sendLength];
+                    int bufferSize = sendLength + 8 + 8; //+sendID+sendLength
+                    byte[] filechunk;
                     int numBytes;
                     long sentBytes = 0;
 
                     FileStream file = new FileStream(sendfile, FileMode.Open);
 
+                    bool isReadFinish = false;
+                    Int64 sendNumber = 0;
                     while (true)
                     {
-                        numBytes =
-                            file.Read(filechunk, 0, sendLength);
-                        if (numBytes > 0)
+                        if (!isReadFinish)
                         {
-                            myIXyComm.sendStream(filechunk, numBytes);
-
-                            //wait
-                            sentBytes += numBytes;
-
-                            while (true)
+                            if (sendTaskDataList.Count <= maxBufferTaskCount)
                             {
-                                if (receivedSentBytes == sentBytes)
+                                filechunk = new byte[bufferSize];
+                                numBytes =
+                                    file.Read(filechunk, 0, sendLength);
+                                if (numBytes > 0)
                                 {
-                                    break;
+                                    sendTaskDataList.Add(
+                                            new fileSendTask(
+                                                sendNumber,
+                                                filechunk,
+                                                numBytes)
+                                            );
+                                    sendNumber++;
                                 }
-
-                                //超时检查
-
-                                Thread.Sleep(sleepTime);
+                                else
+                                {
+                                    isReadFinish = true;
+                                }
                             }
                         }
-                        else
+
+                        if (sendTaskDataList.Count > 0
+                            && sendTasksDic.Count <= maxSendTaskCount)
                         {
+                            fileSendTask fst = sendTaskDataList.First();
+                            lock (inSendTaskDataDic)
+                            {
+                                inSendTaskDataDic.Add(fst.SendNumber, fst);
+                            }
+                            sendTaskDataList.Remove(fst);
+                            Task tempTask = Task.Run(async () => {
+                                bool sendSucceed = false;
+                                while (!sendSucceed)
+                                {
+                                    try
+                                    {
+                                        sendSucceed =
+                                        await myIXyComm.sendNumberedStream(
+                                            fst.SendBytes,
+                                            fst.SendLength,
+                                            fst.SendNumber
+                                            );
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        d("myIXyComm.sendNumberedStream: "
+                                            + e.Message + "" + e.StackTrace);
+                                    }
+                                }
+                                receivedSentBytes += fst.SendLength;
+                                _xyPtoPFileEventHandler(
+                                    this,
+                                    new XyCommFileEventArgs(
+                                        XyCommFileSendReceive.Send,
+                                        totleSendFileLength,
+                                        receivedSentBytes
+                                        )
+                                    );
+                                lock (inSendTaskDataDic)
+                                {
+                                    inSendTaskDataDic.Remove(fst.SendNumber);
+                                }
+
+                                lock (sendTasksDic)
+                                {
+                                    sendTasksDic.Remove(fst.SendNumber);
+                                }
+                            });
+                            lock (sendTasksDic)
+                            {
+                                sendTasksDic.Add(fst.SendNumber, tempTask);
+                            }
+                        }
+
+                        if (isReadFinish && sendTaskDataList.Count == 0)
+                        {
+                            await Task.Run(() => {
+                                while (sendTasksDic.Count > 0) ;
+                            });
+
+                            _xyPtoPFileEventHandler(
+                                this,
+                                new XyCommFileEventArgs(
+                                    XyCommFileSendReceive.Send,
+                                    totleSendFileLength,
+                                    totleSendFileLength // why not equal receivedSentBytes？
+                                    )
+                                );
+
+                            d("all file pkg sent: ");
                             break;
                         }
-                    }
-                    if(totleSendFileLength != receivedSentBytes)
-                    {
-                        //send error??
                     }
                 }
                 catch (ThreadAbortException te)
                 {
+                    d("ThreadAbortException te: " 
+                        + te.Message + "" + te.StackTrace);
                 }
                 catch (Exception e)
                 {
+                    d("Exception e: "
+                        + e.Message + "" + e.StackTrace);
                 }
             }
             );
@@ -337,7 +396,11 @@ namespace xyDroidFolder.comm
                 FolderparKey_requestfile, requestFile);
 
             //ready to receive file
-            prepareReceive(receivedFile);
+            Task receiveFileTask = Task.Run(
+                ()=> { 
+                    ReceiveFile(receivedFile); 
+                }
+                );
 
             CommResult sendCommandResult = await sendData(commData);
 
@@ -351,42 +414,89 @@ namespace xyDroidFolder.comm
                     0)
                 );
 
-            await Task.Run(() => {
-                //wait file recevied, then return 
-                while (inFileReceive)
-                {
-                    Thread.Sleep(sleepTime);
-                }
-            });
+            await receiveFileTask;
         }
-        bool inFileReceive = false;
-        string? receivedFileName = null;
-        FileStream receiveFileStream;
+
         long receviedLength = 0;
         long totleSendFileLength = 0;
-        private void prepareReceive(string receivedFile)
-        {
-            inFileReceive = true;
-            receivedFileName = receivedFile;
-            receviedLength = 0;
-            totleSendFileLength = 0;
 
-            receiveFileStream = new FileStream(
+        private Dictionary<Int64, byte[]> receivedByteArrs;
+        Int64 WaitedPkgID = 0;
+        private void ReceiveFile(string receivedFile)
+        {
+            string receivedFileName = receivedFile;
+            receviedLength = 0;
+            totleSendFileLength = -1;
+
+            receivedByteArrs = new Dictionary<long, byte[]>();
+
+            WaitedPkgID = 0;
+
+            FileStream receiveFileStream = new FileStream(
                 receivedFileName, 
                 FileMode.Create, 
                 FileAccess.Write);
-        }
-        private void finishReceive()
-        {
 
-            inFileReceive = false;
-            receivedFileName = null;
-            if (receiveFileStream != null)
-            {
-                receiveFileStream.Close();
-            }
-            receviedLength = 0;
-            totleSendFileLength = 0;
+            _ = Task.Run(() => {
+                while (true)
+                {
+                    try
+                    {
+                        if (receivedByteArrs.Count > 0
+                        && totleSendFileLength > receviedLength)
+                        {
+                            if (receivedByteArrs.ContainsKey(WaitedPkgID))
+                            {
+                                byte[] tByte = receivedByteArrs[WaitedPkgID];
+                                receiveFileStream.Write(
+                                    tByte,
+                                    0,
+                                    tByte.Length - 8 - 8);
+                                receviedLength += tByte.Length - 8 - 8;
+
+                                lock (receivedByteArrs)
+                                {
+                                    receivedByteArrs.Remove(WaitedPkgID);
+                                }
+                                WaitedPkgID++;
+
+                                _xyPtoPFileEventHandler(
+                                    this,
+                                    new XyCommFileEventArgs(
+                                        XyCommFileSendReceive.Receive,
+                                        totleSendFileLength,
+                                        receviedLength
+                                        )
+                                    );
+                            }
+                        }
+
+                        if (totleSendFileLength == receviedLength)
+                        {
+                            break;
+                        }
+                    }
+                    catch (ThreadAbortException te)
+                    {
+                        d("ThreadAbortException te: "
+                            + te.Message + "" + te.StackTrace);
+                    }
+                    catch (Exception e)
+                    {
+                        d("Exception e: "
+                            + e.Message + "" + e.StackTrace);
+                    }
+                }
+
+                receivedFileName = null;
+                if (receiveFileStream != null)
+                {
+                    receiveFileStream.Close();
+                }
+                receviedLength = 0;
+                WaitedPkgID = 0;
+                totleSendFileLength = 0;
+            });
         }
 
         public async Task ActiveSendFile(
@@ -412,16 +522,7 @@ namespace xyDroidFolder.comm
             CommResult sendCommandResult = await sendData(commData);
 
             //start send file task
-            sendFile(localFile);
-
-            await Task.Run(() => {
-                //wait file sent, then return 
-                while (totleSendFileLength != receivedSentBytes)
-                {
-                    Thread.Sleep(sleepTime);
-                }
-            });
-
+            await sendFileAsync(localFile);
         }
 
         #endregion
@@ -444,6 +545,12 @@ namespace xyDroidFolder.comm
         #endregion
 
         #endregion
+
+        //debug
+        static public void d(string msg)
+        {
+            System.Diagnostics.Debug.WriteLine(msg);
+        }
     }
 
     public delegate void
@@ -454,7 +561,21 @@ namespace xyDroidFolder.comm
         ActiveGetInitFolder,
         ActiveGetFolder,
         ActiveGetFile,
-        ActiveSendFile,
-        FileReceivedConfim
+        ActiveSendFile
+    }
+    public struct fileSendTask
+    {
+        public fileSendTask(
+            Int64 sendNumber,
+            byte[] sendBytes,
+            int sendLength)
+        {
+            SendNumber = sendNumber;
+            SendBytes = sendBytes;
+            SendLength = sendLength;
+        }
+        public Int64 SendNumber;
+        public byte[] SendBytes;
+        public int SendLength;
     }
 }
