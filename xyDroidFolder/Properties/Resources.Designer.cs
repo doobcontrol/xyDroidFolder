@@ -113,5 +113,15 @@ namespace xyDroidFolder.Properties {
                 return ResourceManager.GetString("ScanTitle", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon xyfolder {
+            get {
+                object obj = ResourceManager.GetObject("xyfolder", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }

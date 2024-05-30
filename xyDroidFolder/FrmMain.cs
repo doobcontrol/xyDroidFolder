@@ -35,6 +35,7 @@ namespace xyDroidFolder
 
             R.setCulture(""); //zh-CN
 
+            this.Icon = Properties.Resources.xyfolder;
             this.Text = R.AppName;
 
             treeView1.Visible = false;
