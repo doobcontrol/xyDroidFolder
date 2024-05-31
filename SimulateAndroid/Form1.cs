@@ -32,8 +32,8 @@ namespace SimulateAndroid
             try
             {
                 CommResult registResult = await droidFolderComm.Register(
-                    remoteIP,
-                    remotePort,
+                    localIP,
+                    localPort,
                     System.Environment.MachineName
                     );
 
@@ -72,74 +72,69 @@ namespace SimulateAndroid
             string fileStr = "";
             switch (commData.cmd)
             {
+                case DroidFolderCmd.GetInitFolder:
+                    subdirectoryEntries = Directory.GetDirectories(
+                        path);
+                    foreach (string subdirectory in subdirectoryEntries)
+                    {
+                        if (folderStr != "")
+                        {
+                            folderStr += "|";
+                        }
+                        folderStr += Path.GetFileName(subdirectory);
+                    }
+                    commResult.resultDataDic.Add(
+                        CmdPar.folders.ToString(), folderStr);
 
-                case DroidFolderCmd.Register:
+                    fileEntries = Directory.GetFiles(
+                        path);
+                    foreach (string fileName in fileEntries)
+                    {
+                        if (fileStr != "")
+                        {
+                            fileStr += "|";
+                        }
+                        fileStr += Path.GetFileName(fileName);
+                    }
+                    commResult.resultDataDic.Add(
+                        CmdPar.files.ToString(), fileStr);
+                    ;
+                    showMsg("sent folder info: " + path);
+
                     break;
+                case DroidFolderCmd.GetFolder:
+                    string requestfolder =
+                        commData.cmdParDic[CmdPar.requestPath.ToString()];
+                    string reqPath = Path.Combine(path, requestfolder);
+                    subdirectoryEntries = Directory.GetDirectories(
+                        reqPath);
+                    foreach (string subdirectory in subdirectoryEntries)
+                    {
+                        if (folderStr != "")
+                        {
+                            folderStr += "|";
+                        }
+                        folderStr += Path.GetFileName(subdirectory);
+                    }
+                    commResult.resultDataDic.Add(
+                        CmdPar.folders.ToString(), folderStr);
 
-                //case XyPtoPCmd.ActiveGetInitFolder:
+                    fileEntries = Directory.GetFiles(
+                        reqPath);
+                    foreach (string fileName in fileEntries)
+                    {
+                        if (fileStr != "")
+                        {
+                            fileStr += "|";
+                        }
+                        fileStr += Path.GetFileName(fileName);
+                    }
+                    commResult.resultDataDic.Add(
+                        CmdPar.files.ToString(), fileStr);
+                    ;
+                    showMsg("sent folder info: " + reqPath);
 
-                //    subdirectoryEntries = Directory.GetDirectories(
-                //        path);
-                //    foreach (string subdirectory in subdirectoryEntries)
-                //    {
-                //        if (folderStr != "")
-                //        {
-                //            folderStr += "|";
-                //        }
-                //        folderStr += Path.GetFileName(subdirectory);
-                //    }
-                //    commResult.resultDataDic.Add(
-                //        XyPtoPEnd.FolderparKey_folders, folderStr);
-
-                //    fileEntries = Directory.GetFiles(
-                //        path);
-                //    foreach (string fileName in fileEntries)
-                //    {
-                //        if (fileStr != "")
-                //        {
-                //            fileStr += "|";
-                //        }
-                //        fileStr += Path.GetFileName(fileName);
-                //    }
-                //    commResult.resultDataDic.Add(
-                //        XyPtoPEnd.FolderparKey_files, fileStr);
-                //    ;
-                //    showMsg("sent folder info: " + path);
-
-                //    break;
-                //case XyPtoPCmd.ActiveGetFolder:
-                //    string requestfolder = 
-                //        commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfolder];
-                //    string reqPath = Path.Combine(path, requestfolder);
-                //    subdirectoryEntries = Directory.GetDirectories(
-                //        reqPath);
-                //    foreach (string subdirectory in subdirectoryEntries)
-                //    {
-                //        if (folderStr != "")
-                //        {
-                //            folderStr += "|";
-                //        }
-                //        folderStr += Path.GetFileName(subdirectory);
-                //    }
-                //    commResult.resultDataDic.Add(
-                //        XyPtoPEnd.FolderparKey_folders, folderStr);
-
-                //    fileEntries = Directory.GetFiles(
-                //        reqPath);
-                //    foreach (string fileName in fileEntries)
-                //    {
-                //        if (fileStr != "")
-                //        {
-                //            fileStr += "|";
-                //        }
-                //        fileStr += Path.GetFileName(fileName);
-                //    }
-                //    commResult.resultDataDic.Add(
-                //        XyPtoPEnd.FolderparKey_files, fileStr);
-                //    ;
-                //    showMsg("sent folder info: " + reqPath);
-
-                //    break;
+                    break;
                 //case XyPtoPCmd.ActiveGetFile:
                 //    string requestfile = Path.Combine(
                 //            path,

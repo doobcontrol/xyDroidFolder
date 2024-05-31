@@ -31,18 +31,19 @@ namespace xySoft.comm
         public async Task<byte[]> sendBytesForResponseAsync(byte[] sendBytes, int sendLength)
         {
             UdpClient uc = new UdpClient();
+            uc.ExclusiveAddressUse = true;
             uc.Send(sendBytes, sendLength, targetPoint);
 
             //read Response
             IPEndPoint tempPoint = new IPEndPoint(
                 targetPoint.Address,
                 targetPoint.Port);
-            byte[] receivedBytes
-                = await Task.Run(() => {
+            byte[] receivedBytes = await Task.Run(() => {
                     return uc.Receive(ref tempPoint);
                 });
 
             uc.Close();
+            uc = null;
 
             return receivedBytes;
         }
@@ -68,7 +69,9 @@ namespace xySoft.comm
         bool stopListen = true;
         public void startListen()
         {
-            UdpClient udpServer = new UdpClient(localPoint);
+            UdpClient udpServer = new UdpClient();
+            udpServer.ExclusiveAddressUse = true;
+            udpServer.Client.Bind(localPoint);
 
             stopListen = false;
             _ = Task.Run(
@@ -80,21 +83,24 @@ namespace xySoft.comm
                     {
                         IPEndPoint tempPoint 
                             = new IPEndPoint(IPAddress.Any, 0);
-                        byte[] receivedBytes
-                            = udpServer.Receive(ref tempPoint); //??
-                        
-                        string receivedString =
-                            Encoding.UTF8.GetString(
-                                receivedBytes, 0, receivedBytes.Length);
 
-                        byte[] sendBytes = Encoding.UTF8.GetBytes(
-                            _xyCommRequestHandler(receivedString)
+                        byte[] receivedBytes = udpServer.Receive(
+                            ref tempPoint); //??
+
+                        string receivedString = Encoding.UTF8.GetString(
+                            receivedBytes, 0, receivedBytes.Length
                             );
 
-                        udpServer.Send(
-                            sendBytes,
-                            tempPoint
-                            );
+                        string resultString = _xyCommRequestHandler(receivedString);
+                        if (resultString != null)
+                        {
+                            udpServer.Send(
+                                Encoding.UTF8.GetBytes(
+                                    resultString
+                                ),
+                                tempPoint
+                                );
+                        }
                     }
                 }
                 catch (ThreadAbortException te)

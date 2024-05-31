@@ -26,6 +26,71 @@ namespace xyDroidFolder.comm
             myIXyComm.startListen();
         }
 
+        private string XyCommRequestHandler(string receivedString)
+        {
+            CommResult commResult;
+
+            try
+            {
+                CommData commData = CommData.fromReceivedString(receivedString);
+                commResult = new CommResult(commData);
+
+                switch (commData.cmd)
+                {
+                    case DroidFolderCmd.Register:
+                        //register target ip and port
+                        Dictionary<string, string> setDic = new Dictionary<string, string>();
+                        setDic[XyUdpCommTargetSetPar.ip.ToString()]
+                            = commData.cmdParDic[CmdPar.ip.ToString()];
+                        setDic[XyUdpCommTargetSetPar.port.ToString()]
+                            = commData.cmdParDic[CmdPar.port.ToString()];
+                        myIXyComm.set(setDic);
+
+                        _droidFolderRequestHandler(commData, commResult);
+
+                        commResult.resultDataDic.Add(
+                            CmdPar.returnMsg.ToString(),
+                            "Regist ok");
+                        break;
+                    case DroidFolderCmd.GetInitFolder:
+                        _droidFolderRequestHandler(commData, commResult);
+                        commResult.cmdSucceed = true;
+                        break;
+                    case DroidFolderCmd.GetFolder:
+                        _droidFolderRequestHandler(commData, commResult);
+                        commResult.cmdSucceed = true;
+                        break;
+
+                    default:
+                        commResult.resultDataDic.Add(
+                            CmdPar.errorMsg.ToString(),
+                            "Cannot hand this command");
+                        commResult.cmdSucceed = true;
+                        break;
+                }
+            }
+            catch(Exception e)
+            {
+                commResult = null;
+            }
+
+            string retStr = null;
+            if (commResult != null)
+            {
+                retStr = commResult.toSendString();
+            }
+            return retStr;
+        }
+
+        private async Task<CommResult> XyCommRequestAsync(CommData commData)
+        {
+            string resultString = await myIXyComm.sendForResponseAsync(
+                commData.toSendString()
+                );
+
+            return CommResult.fromReturnString(resultString, commData);
+        }
+
         public async Task<CommResult> Register(
             string ip, int port, string hostName
             )
@@ -35,38 +100,22 @@ namespace xyDroidFolder.comm
             commData.cmdParDic.Add(CmdPar.port.ToString(), port.ToString());
             commData.cmdParDic.Add(CmdPar.hostName.ToString(), hostName);
 
-            string resultString = await myIXyComm.sendForResponseAsync(
-                commData.toSendString()
-                );
-
-            return CommResult.fromReturnString(resultString, commData);
+            return await XyCommRequestAsync(commData);
         }
 
-        private string XyCommRequestHandler(string receivedString)
+        public async Task<CommResult> GetInitFolder()
         {
-            CommData commData = CommData.fromReceivedString(receivedString);
-            CommResult commResult = new CommResult(commData);
+            CommData commData = new CommData(DroidFolderCmd.GetInitFolder);
 
-            switch (commData.cmd)
-            {
-                case DroidFolderCmd.Register:
-                    //register target ip and port
-                    Dictionary<string, string> setDic = new Dictionary<string, string>();
-                    setDic[XyUdpCommTargetSetPar.ip.ToString()] 
-                        = commData.cmdParDic[CmdPar.ip.ToString()];
-                    setDic[XyUdpCommTargetSetPar.port.ToString()]
-                        = commData.cmdParDic[CmdPar.port.ToString()];
-                    myIXyComm.set(setDic);
+            return await XyCommRequestAsync(commData);
+        }
 
-                    _droidFolderRequestHandler(commData, commResult);
+        public async Task<CommResult> GetFolder(string path)
+        {
+            CommData commData = new CommData(DroidFolderCmd.GetFolder);
+            commData.cmdParDic.Add(CmdPar.requestPath.ToString(), path);
 
-                    commResult.resultDataDic.Add(
-                        CmdPar.returnMsg.ToString(),
-                        "Regist ok");
-                    break;
-            }
-
-            return commResult.toSendString();
+            return await XyCommRequestAsync(commData);
         }
     }
     public enum DroidFolderCmd
@@ -85,6 +134,9 @@ namespace xyDroidFolder.comm
         ip,
         port,
         hostName,
+        requestPath,
+        folders,
+        files,
         returnMsg,
         errorMsg
     }

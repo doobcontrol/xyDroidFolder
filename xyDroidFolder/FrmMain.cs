@@ -189,73 +189,73 @@ namespace xyDroidFolder
             {
                 if (tn.Level == 0)
                 {
-                    //CommResult commResult =
-                    //    await xyPtoPEnd.ActiveGetInitFolder();
+                    CommResult commResult =
+                        await droidFolderComm.GetInitFolder();
 
-                    //string[] folders = commResult.resultDataDic[
-                    //    XyPtoPEnd.FolderparKey_folders
-                    //    ].Split("|");
-                    //string[] files = commResult.resultDataDic[
-                    //    XyPtoPEnd.FolderparKey_files
-                    //    ].Split("|");
+                    string[] folders = commResult.resultDataDic[
+                        CmdPar.folders.ToString()
+                        ].Split("|");
+                    string[] files = commResult.resultDataDic[
+                        CmdPar.files.ToString()
+                        ].Split("|");
 
-                    //tv.BeginUpdate();
-                    //TreeNode TempTn;
+                    tv.BeginUpdate();
+                    TreeNode TempTn;
 
-                    //foreach (string folder in folders)
-                    //{
-                    //    if (folder != "")
-                    //    {
-                    //        TempTn = tn.Nodes.Add(folder);
-                    //    }
-                    //}
+                    foreach (string folder in folders)
+                    {
+                        if (folder != "")
+                        {
+                            TempTn = tn.Nodes.Add(folder);
+                        }
+                    }
 
-                    //tn.Text = tv.Tag.ToString();
-                    //tv.EndUpdate();
+                    tn.Text = tv.Tag.ToString();
+                    tv.EndUpdate();
 
-                    //tn.Expand();
+                    tn.Expand();
 
-                    ////show files
-                    //tn.Tag = files;
-                    //showFiles(tn);
+                    //show files
+                    tn.Tag = files;
+                    showFiles(tn);
                 }
                 else
                 {
-                    //string path = tn.FullPath.Replace(
-                    //    tv.Tag.ToString() + "\\", "");
+                    string path = tn.FullPath.Replace(
+                        tv.Tag.ToString() + "\\", "");
 
-                    //CommResult commResult =
-                    //    await xyPtoPEnd.ActiveGetFolder(path);
+                    CommResult commResult =
+                        await droidFolderComm.GetFolder(path);
 
 
-                    //string[] folders = commResult.resultDataDic[
-                    //    XyPtoPEnd.FolderparKey_folders
-                    //    ].Split("|");
-                    //string[] files = commResult.resultDataDic[
-                    //    XyPtoPEnd.FolderparKey_files
-                    //    ].Split("|");
+                    string[] folders = commResult.resultDataDic[
+                        CmdPar.folders.ToString()
+                        ].Split("|");
+                    string[] files = commResult.resultDataDic[
+                        CmdPar.files.ToString()
+                        ].Split("|");
 
-                    //tv.BeginUpdate();
-                    //TreeNode TempTn;
+                    tv.BeginUpdate();
+                    TreeNode TempTn;
 
-                    //foreach (string folder in folders)
-                    //{
-                    //    if (folder != "")
-                    //    {
-                    //        TempTn = tn.Nodes.Add(folder);
-                    //    }
-                    //}
+                    foreach (string folder in folders)
+                    {
+                        if (folder != "")
+                        {
+                            TempTn = tn.Nodes.Add(folder);
+                        }
+                    }
 
-                    //tv.EndUpdate();
+                    tv.EndUpdate();
 
-                    //if (folders.Length > 0)
-                    //{
-                    //    tn.Expand();
-                    //}
+                    if (folders.Length > 0)
+                    {
+                        tn.Expand();
+                    }
 
-                    ////show files
-                    //tn.Tag = files;
-                    //showFiles(tn);
+                    //show files
+                    tn.Tag = files;
+                    showFiles(tn);
                 }
             }
             else
