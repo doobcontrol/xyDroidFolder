@@ -8,43 +8,49 @@ namespace xyDroidFolder.comm
 {
     public class CommData
     {
-        static public string commDicKey_cmdID = "cmdID";
-        static public string commDicKey_cmd = "cmd";
-
-        public CommData(XyPtoPCmd cmd) {
+        public CommData(DroidFolderCmd cmd) {
             this.cmd = cmd;
         }
-        private CommData(Dictionary<string, string> parsDic)
+        private CommData(string receivedString)
         {
-            this.cmd = (XyPtoPCmd)Enum.Parse(
-                typeof(XyPtoPCmd), parsDic[commDicKey_cmd], false);
-            this.cmdID = parsDic[commDicKey_cmdID];
+            string[] pars = receivedString.Split(',');
+            Dictionary<string, string> parsDic = 
+                new Dictionary<string, string>();
+            foreach (string par in pars)
+            {
+                string[] parArr = par.Split('=');
+                parsDic.Add(parArr[0], parArr[1]);
+            }
+
+            this.cmd = (DroidFolderCmd)Enum.Parse(
+                typeof(DroidFolderCmd), parsDic[CmdPar.cmd.ToString()], false);
+            this.cmdID = parsDic[CmdPar.cmdID.ToString()];
 
             this.cmdParDic
                 = parsDic.ToDictionary<string, string>();
-            this.cmdParDic.Remove(commDicKey_cmd);
+            this.cmdParDic.Remove(CmdPar.cmd.ToString());
             this.cmdParDic.Remove(cmdID);
         }
 
         public string cmdID = Guid.NewGuid().ToString("N");
-        public XyPtoPCmd cmd;
+        public DroidFolderCmd cmd;
         public Dictionary<string, string> cmdParDic 
             = new Dictionary<string, string>();
 
-        public Dictionary<string, string> toCommDic()
+        public string toSendString()
         {
-            Dictionary<string, string> commDic
-            = cmdParDic.ToDictionary<string,string>();
-
-            commDic.Add(commDicKey_cmdID, cmdID);
-            commDic.Add(commDicKey_cmd, cmd.ToString());
-
-            return commDic;
+            string sendString = CmdPar.cmd + "=" + cmd;
+            sendString += "," + CmdPar.cmdID + "=" + cmdID;
+            foreach (string pName in cmdParDic.Keys)
+            {
+                sendString += "," + pName + "=" + cmdParDic[pName];
+            }
+            return sendString;
         }
 
-        public static CommData fromReceivedData(Dictionary<string, string> parsDic)
+        public static CommData fromReceivedString(string receivedString)
         {
-            return new CommData(parsDic);
+            return new CommData(receivedString);
         }
     }
 }

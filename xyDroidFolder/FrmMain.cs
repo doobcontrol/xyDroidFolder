@@ -21,13 +21,12 @@ namespace xyDroidFolder
 {
     public partial class FrmMain : Form
     {
-        bool isDebug = false; //true / false
+        bool isDebug = true; //true / false
 
         int qrSize = 200;
-        int chatPort = 12919;
-        int streamPort = 12920;
+        int Port = 12919;
 
-        XyPtoPEnd xyPtoPEnd;
+        DroidFolderComm droidFolderComm;
 
         public FrmMain()
         {
@@ -80,22 +79,14 @@ namespace xyDroidFolder
 
         private void setLocalIpEndPoint(string localIP)
         {
-            Dictionary<string, string> pEndPars
-                = new Dictionary<string, string>();
-            pEndPars.Add(XyUdpComm.workparKey_localIP, localIP);
-            pEndPars.Add(XyUdpComm.workparKey_localChatPort, chatPort.ToString());
-            pEndPars.Add(XyUdpComm.workparKey_localStreamPort, streamPort.ToString());
-
-            xyPtoPEnd = new XyPtoPEnd(
-                XyPtoPEndType.ActiveEnd,
-                pEndPars,
-                XyPtoPRequestHandler,
-                FileEventHandler
+            droidFolderComm = new DroidFolderComm(
+                localIP, Port,
+                null, 0, DroidFolderRequestHandler
                 );
 
             try
             {
-                pictureBox1.Image = getQRImage(localIP, chatPort, streamPort);
+                pictureBox1.Image = getQRImage(localIP, Port);
             }
             catch (Exception e)
             {
@@ -105,8 +96,7 @@ namespace xyDroidFolder
 
         private Bitmap getQRImage(
             string ip,
-            int chatPort,
-            int streamPort
+            int port
             )
         {
             var writer = new ZXing.Windows.Compatibility.BarcodeWriter
@@ -116,7 +106,7 @@ namespace xyDroidFolder
             };
 
             Bitmap retImg = writer.Write(
-                ip + ":" + chatPort + ":" + streamPort
+                ip + ":" + port
                 );
             return retImg;
         }
@@ -137,14 +127,14 @@ namespace xyDroidFolder
             }
         }
 
-        private void XyPtoPRequestHandler(CommData commData, CommResult commResult)
+        private void DroidFolderRequestHandler(CommData commData, CommResult commResult)
         {
             switch (commData.cmd)
             {
-                case XyPtoPCmd.PassiveRegist:
+                case DroidFolderCmd.Register:
                     initFoldTree(
                         treeView1,
-                        commData.cmdParDic[XyPtoPEnd.FolderparKey_hostName]);
+                        commData.cmdParDic[CmdPar.hostName.ToString()]);
                     break;
                 default:
                     break;
@@ -199,73 +189,73 @@ namespace xyDroidFolder
             {
                 if (tn.Level == 0)
                 {
-                    CommResult commResult =
-                        await xyPtoPEnd.ActiveGetInitFolder();
+                    //CommResult commResult =
+                    //    await xyPtoPEnd.ActiveGetInitFolder();
 
-                    string[] folders = commResult.resultDataDic[
-                        XyPtoPEnd.FolderparKey_folders
-                        ].Split("|");
-                    string[] files = commResult.resultDataDic[
-                        XyPtoPEnd.FolderparKey_files
-                        ].Split("|");
+                    //string[] folders = commResult.resultDataDic[
+                    //    XyPtoPEnd.FolderparKey_folders
+                    //    ].Split("|");
+                    //string[] files = commResult.resultDataDic[
+                    //    XyPtoPEnd.FolderparKey_files
+                    //    ].Split("|");
 
-                    tv.BeginUpdate();
-                    TreeNode TempTn;
+                    //tv.BeginUpdate();
+                    //TreeNode TempTn;
 
-                    foreach (string folder in folders)
-                    {
-                        if (folder != "")
-                        {
-                            TempTn = tn.Nodes.Add(folder);
-                        }
-                    }
+                    //foreach (string folder in folders)
+                    //{
+                    //    if (folder != "")
+                    //    {
+                    //        TempTn = tn.Nodes.Add(folder);
+                    //    }
+                    //}
 
-                    tn.Text = tv.Tag.ToString();
-                    tv.EndUpdate();
+                    //tn.Text = tv.Tag.ToString();
+                    //tv.EndUpdate();
 
-                    tn.Expand();
+                    //tn.Expand();
 
-                    //show files
-                    tn.Tag = files;
-                    showFiles(tn);
+                    ////show files
+                    //tn.Tag = files;
+                    //showFiles(tn);
                 }
                 else
                 {
-                    string path = tn.FullPath.Replace(
-                        tv.Tag.ToString() + "\\", "");
+                    //string path = tn.FullPath.Replace(
+                    //    tv.Tag.ToString() + "\\", "");
 
-                    CommResult commResult =
-                        await xyPtoPEnd.ActiveGetFolder(path);
+                    //CommResult commResult =
+                    //    await xyPtoPEnd.ActiveGetFolder(path);
 
 
-                    string[] folders = commResult.resultDataDic[
-                        XyPtoPEnd.FolderparKey_folders
-                        ].Split("|");
-                    string[] files = commResult.resultDataDic[
-                        XyPtoPEnd.FolderparKey_files
-                        ].Split("|");
+                    //string[] folders = commResult.resultDataDic[
+                    //    XyPtoPEnd.FolderparKey_folders
+                    //    ].Split("|");
+                    //string[] files = commResult.resultDataDic[
+                    //    XyPtoPEnd.FolderparKey_files
+                    //    ].Split("|");
 
-                    tv.BeginUpdate();
-                    TreeNode TempTn;
+                    //tv.BeginUpdate();
+                    //TreeNode TempTn;
 
-                    foreach (string folder in folders)
-                    {
-                        if (folder != "")
-                        {
-                            TempTn = tn.Nodes.Add(folder);
-                        }
-                    }
+                    //foreach (string folder in folders)
+                    //{
+                    //    if (folder != "")
+                    //    {
+                    //        TempTn = tn.Nodes.Add(folder);
+                    //    }
+                    //}
 
-                    tv.EndUpdate();
+                    //tv.EndUpdate();
 
-                    if (folders.Length > 0)
-                    {
-                        tn.Expand();
-                    }
+                    //if (folders.Length > 0)
+                    //{
+                    //    tn.Expand();
+                    //}
 
-                    //show files
-                    tn.Tag = files;
-                    showFiles(tn);
+                    ////show files
+                    //tn.Tag = files;
+                    //showFiles(tn);
                 }
             }
             else
@@ -330,8 +320,8 @@ namespace xyDroidFolder
             }
             string receivedFile = Path.Combine(receivedPath, file); ;
 
-            await xyPtoPEnd.ActiveGetFile(
-                    requestfile, receivedFile);
+            //await xyPtoPEnd.ActiveGetFile(
+            //        requestfile, receivedFile);
 
             panel4.Enabled = true;
             panel5.Enabled = true;
@@ -359,8 +349,8 @@ namespace xyDroidFolder
                     )
                     .Replace(treeView1.Tag.ToString() + "\\", "");
 
-                await xyPtoPEnd.ActiveSendFile(
-                        localFile, remoteFile);
+                //await xyPtoPEnd.ActiveSendFile(
+                //        localFile, remoteFile);
 
                 panel4.Enabled = true;
                 panel5.Enabled = true;

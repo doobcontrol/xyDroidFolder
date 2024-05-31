@@ -8,44 +8,55 @@ namespace xyDroidFolder.comm
 {
     public class CommResult
     {
-        static public string resultDataKey_ActiveEndInfo = "ActiveEndInfo";
-        static public string resultDataKey_ErrorInfo = "ErrorInfo";
-        static public string resultDataKey_cmdSucceed = "cmdSucceed";
-
         public CommResult(CommData receivedData)
         {
             cmdID = receivedData.cmdID;
         }
-        private CommResult(Dictionary<string, string> resultDic)
+        private CommResult(string ReturnString)
         {
-            this.cmdID = resultDic[CommData.commDicKey_cmdID];
-            this.cmdSucceed = bool.Parse(resultDic[resultDataKey_cmdSucceed]);
+            string[] pars = ReturnString.Split(',');
+            Dictionary<string, string> resultDic =
+                new Dictionary<string, string>();
+            foreach (string par in pars)
+            {
+                string[] parArr = par.Split('=');
+                resultDic.Add(parArr[0], parArr[1]);
+            }
+
+            this.cmdID = resultDic[CmdPar.cmdID.ToString()];
+            this.cmdSucceed = bool.Parse(resultDic[CmdPar.cmdSucceed.ToString()]);
 
             this.resultDataDic
                 = resultDic.ToDictionary<string, string>();
-            this.resultDataDic.Remove(CommData.commDicKey_cmdID);
+            this.resultDataDic.Remove(CmdPar.cmdID.ToString());
+            this.resultDataDic.Remove(CmdPar.cmdSucceed.ToString());
         }
 
-        public bool cmdSucceed;
+        public bool cmdSucceed = true;
         public bool errorCmdID = false;
         public string cmdID;
         public Dictionary<string, string> resultDataDic
             = new Dictionary<string, string>();
 
-        public Dictionary<string, string> toCommDic()
+        public string toSendString()
         {
-            Dictionary<string, string> commDic
-            = resultDataDic.ToDictionary<string, string>();
-
-            commDic.Add(CommData.commDicKey_cmdID, cmdID);
-            commDic.Add(resultDataKey_cmdSucceed, cmdSucceed.ToString());
-
-            return commDic;
+            string sendString = CmdPar.cmdID + "=" + cmdID;
+            sendString += "," + CmdPar.cmdSucceed + "=" + cmdSucceed;
+            foreach (string pName in resultDataDic.Keys)
+            {
+                sendString += "," + pName + "=" + resultDataDic[pName];
+            }
+            return sendString;
         }
 
-        public static CommResult fromReceivedResult(Dictionary<string, string> parsDic)
+        public static CommResult fromReturnString(
+            string ReturnString,
+            CommData sendData
+            )
         {
-            return new CommResult(parsDic);
+            CommResult commResult = new CommResult(ReturnString);
+            commResult.errorCmdID = (commResult.cmdID != sendData.cmdID);
+            return new CommResult(ReturnString);
         }
     }
 }

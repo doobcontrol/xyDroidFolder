@@ -5,14 +5,12 @@ namespace SimulateAndroid
 {
     public partial class Form1 : Form
     {
-        XyPtoPEnd xyPtoPEnd;
+        DroidFolderComm droidFolderComm;
 
         string localIP = "192.168.168.129";
-        string localChatPort = "12921";
-        string localStreamPort = "12922";
-        string remoteIP = "192.168.168.1";
-        string remoteChatPort = "12919";
-        string remoteStreamPort = "12920";
+        int localPort = 12921;
+        string remoteIP = "192.168.168.129"; //"192.168.168.129"  "192.168.168.1"
+        int remotePort = 12919;
 
         public Form1()
         {
@@ -26,38 +24,17 @@ namespace SimulateAndroid
         {
             showMsg("start regist ……");
 
-            Dictionary<string, string> pLocalEndPars 
-                = new Dictionary<string, string>();
-            pLocalEndPars.Add(XyUdpComm.workparKey_localIP, localIP);
-            pLocalEndPars.Add(XyUdpComm.workparKey_localChatPort, localChatPort);
-            pLocalEndPars.Add(XyUdpComm.workparKey_localStreamPort, localStreamPort);
-
-            xyPtoPEnd = new XyPtoPEnd(
-                    XyPtoPEndType.PassiveEnd,
-                    pLocalEndPars, 
-                    XyPtoPRequestHandler,
-                    FileEventHandler);
-
-            //因用于对方配置远程地址，因此仍使用remote key
-            pLocalEndPars
-                = new Dictionary<string, string>();
-            pLocalEndPars.Add(XyUdpComm.workparKey_remoteIP, localIP);
-            pLocalEndPars.Add(XyUdpComm.workparKey_remoteChatPort, localChatPort);
-            pLocalEndPars.Add(XyUdpComm.workparKey_remoteStreamPort, localStreamPort);
-            pLocalEndPars.Add(XyPtoPEnd.FolderparKey_hostName,
-                System.Environment.MachineName);
-
-            Dictionary<string, string> pRemoteEndPars
-                = new Dictionary<string, string>();
-            pRemoteEndPars.Add(XyUdpComm.workparKey_remoteIP, remoteIP);
-            pRemoteEndPars.Add(XyUdpComm.workparKey_remoteChatPort, remoteChatPort);
-            pRemoteEndPars.Add(XyUdpComm.workparKey_remoteStreamPort, remoteStreamPort);
+            droidFolderComm = new DroidFolderComm(
+                localIP, localPort,
+                remoteIP, remotePort, DroidFolderRequestHandler
+                );
 
             try
             {
-                CommResult registResult = await xyPtoPEnd.Regist(
-                    pLocalEndPars,
-                    pRemoteEndPars
+                CommResult registResult = await droidFolderComm.Register(
+                    remoteIP,
+                    remotePort,
+                    System.Environment.MachineName
                     );
 
                 if (registResult.errorCmdID)
@@ -67,13 +44,13 @@ namespace SimulateAndroid
                 else if (!registResult.cmdSucceed)
                 {
                     showMsg("Regist error: " + registResult.resultDataDic[
-                        CommResult.resultDataKey_ErrorInfo
+                        CmdPar.errorMsg.ToString()
                         ]);
                 }
                 else
                 {
                     showMsg(registResult.resultDataDic[
-                        CommResult.resultDataKey_ActiveEndInfo
+                        CmdPar.returnMsg.ToString()
                         ]);
                 }
                 button1.Enabled = false;
@@ -81,12 +58,12 @@ namespace SimulateAndroid
             catch(Exception ex)
             {
                 MessageBox.Show(ex.Message + " - " + ex.StackTrace);
-                xyPtoPEnd.clean();
+                //xyPtoPEnd.clean();
             }
         }
 
         string path = "C:\\";
-        private void XyPtoPRequestHandler(CommData commData, CommResult commResult)
+        private void DroidFolderRequestHandler(CommData commData, CommResult commResult)
         {
             showMsg("in request: " + commData.cmd.ToString());
             string[] subdirectoryEntries;
@@ -95,92 +72,96 @@ namespace SimulateAndroid
             string fileStr = "";
             switch (commData.cmd)
             {
-                case XyPtoPCmd.ActiveGetInitFolder:
 
-                    subdirectoryEntries = Directory.GetDirectories(
-                        path);
-                    foreach (string subdirectory in subdirectoryEntries)
-                    {
-                        if (folderStr != "")
-                        {
-                            folderStr += "|";
-                        }
-                        folderStr += Path.GetFileName(subdirectory);
-                    }
-                    commResult.resultDataDic.Add(
-                        XyPtoPEnd.FolderparKey_folders, folderStr);
-
-                    fileEntries = Directory.GetFiles(
-                        path);
-                    foreach (string fileName in fileEntries)
-                    {
-                        if (fileStr != "")
-                        {
-                            fileStr += "|";
-                        }
-                        fileStr += Path.GetFileName(fileName);
-                    }
-                    commResult.resultDataDic.Add(
-                        XyPtoPEnd.FolderparKey_files, fileStr);
-                    ;
-                    showMsg("sent folder info: " + path);
-
+                case DroidFolderCmd.Register:
                     break;
-                case XyPtoPCmd.ActiveGetFolder:
-                    string requestfolder = 
-                        commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfolder];
-                    string reqPath = Path.Combine(path, requestfolder);
-                    subdirectoryEntries = Directory.GetDirectories(
-                        reqPath);
-                    foreach (string subdirectory in subdirectoryEntries)
-                    {
-                        if (folderStr != "")
-                        {
-                            folderStr += "|";
-                        }
-                        folderStr += Path.GetFileName(subdirectory);
-                    }
-                    commResult.resultDataDic.Add(
-                        XyPtoPEnd.FolderparKey_folders, folderStr);
 
-                    fileEntries = Directory.GetFiles(
-                        reqPath);
-                    foreach (string fileName in fileEntries)
-                    {
-                        if (fileStr != "")
-                        {
-                            fileStr += "|";
-                        }
-                        fileStr += Path.GetFileName(fileName);
-                    }
-                    commResult.resultDataDic.Add(
-                        XyPtoPEnd.FolderparKey_files, fileStr);
-                    ;
-                    showMsg("sent folder info: " + reqPath);
+                //case XyPtoPCmd.ActiveGetInitFolder:
 
-                    break;
-                case XyPtoPCmd.ActiveGetFile:
-                    string requestfile = Path.Combine(
-                            path,
-                            commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfile]);
+                //    subdirectoryEntries = Directory.GetDirectories(
+                //        path);
+                //    foreach (string subdirectory in subdirectoryEntries)
+                //    {
+                //        if (folderStr != "")
+                //        {
+                //            folderStr += "|";
+                //        }
+                //        folderStr += Path.GetFileName(subdirectory);
+                //    }
+                //    commResult.resultDataDic.Add(
+                //        XyPtoPEnd.FolderparKey_folders, folderStr);
 
-                    commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfile]
-                        = requestfile;
+                //    fileEntries = Directory.GetFiles(
+                //        path);
+                //    foreach (string fileName in fileEntries)
+                //    {
+                //        if (fileStr != "")
+                //        {
+                //            fileStr += "|";
+                //        }
+                //        fileStr += Path.GetFileName(fileName);
+                //    }
+                //    commResult.resultDataDic.Add(
+                //        XyPtoPEnd.FolderparKey_files, fileStr);
+                //    ;
+                //    showMsg("sent folder info: " + path);
 
-                    showMsg("start send file: " + requestfile);
+                //    break;
+                //case XyPtoPCmd.ActiveGetFolder:
+                //    string requestfolder = 
+                //        commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfolder];
+                //    string reqPath = Path.Combine(path, requestfolder);
+                //    subdirectoryEntries = Directory.GetDirectories(
+                //        reqPath);
+                //    foreach (string subdirectory in subdirectoryEntries)
+                //    {
+                //        if (folderStr != "")
+                //        {
+                //            folderStr += "|";
+                //        }
+                //        folderStr += Path.GetFileName(subdirectory);
+                //    }
+                //    commResult.resultDataDic.Add(
+                //        XyPtoPEnd.FolderparKey_folders, folderStr);
 
-                    break;
-                case XyPtoPCmd.ActiveSendFile:
-                    string sendfile = Path.Combine(
-                            path,
-                            commData.cmdParDic[XyPtoPEnd.FolderparKey_sendfile]);
+                //    fileEntries = Directory.GetFiles(
+                //        reqPath);
+                //    foreach (string fileName in fileEntries)
+                //    {
+                //        if (fileStr != "")
+                //        {
+                //            fileStr += "|";
+                //        }
+                //        fileStr += Path.GetFileName(fileName);
+                //    }
+                //    commResult.resultDataDic.Add(
+                //        XyPtoPEnd.FolderparKey_files, fileStr);
+                //    ;
+                //    showMsg("sent folder info: " + reqPath);
 
-                    commData.cmdParDic[XyPtoPEnd.FolderparKey_sendfile]
-                        = sendfile;
+                //    break;
+                //case XyPtoPCmd.ActiveGetFile:
+                //    string requestfile = Path.Combine(
+                //            path,
+                //            commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfile]);
 
-                    showMsg("ready to receive file: " + sendfile);
+                //    commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfile]
+                //        = requestfile;
 
-                    break;
+                //    showMsg("start send file: " + requestfile);
+
+                //    break;
+                //case XyPtoPCmd.ActiveSendFile:
+                //    string sendfile = Path.Combine(
+                //            path,
+                //            commData.cmdParDic[XyPtoPEnd.FolderparKey_sendfile]);
+
+                //    commData.cmdParDic[XyPtoPEnd.FolderparKey_sendfile]
+                //        = sendfile;
+
+                //    showMsg("ready to receive file: " + sendfile);
+
+                //    break;
 
                 default:
                     break;

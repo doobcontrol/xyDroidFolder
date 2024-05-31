@@ -10,9 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xyDroidFolder.comm", "xyDroidFolder.comm\xyDroidFolder.comm.csproj", "{986320A2-CAB6-49AD-B818-34981935BE80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xyDroidFolder.comm", "xyDroidFolder.comm\xyDroidFolder.comm.csproj", "{986320A2-CAB6-49AD-B818-34981935BE80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulateAndroid", "SimulateAndroid\SimulateAndroid.csproj", "{2F8258DC-94C9-44E8-9841-F30C515F66CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimulateAndroid", "SimulateAndroid\SimulateAndroid.csproj", "{2F8258DC-94C9-44E8-9841-F30C515F66CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xySoft.comm", "xySoft.comm\xySoft.comm.csproj", "{69BFF434-7080-41F6-BB69-A571ED6D4F6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{2F8258DC-94C9-44E8-9841-F30C515F66CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F8258DC-94C9-44E8-9841-F30C515F66CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F8258DC-94C9-44E8-9841-F30C515F66CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69BFF434-7080-41F6-BB69-A571ED6D4F6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69BFF434-7080-41F6-BB69-A571ED6D4F6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69BFF434-7080-41F6-BB69-A571ED6D4F6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69BFF434-7080-41F6-BB69-A571ED6D4F6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
