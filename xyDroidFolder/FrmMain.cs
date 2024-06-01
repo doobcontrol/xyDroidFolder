@@ -16,6 +16,7 @@ using System.Diagnostics;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using TreeView = System.Windows.Forms.TreeView;
 using ComboBox = System.Windows.Forms.ComboBox;
+using System.Reflection;
 
 namespace xyDroidFolder
 {
@@ -39,9 +40,7 @@ namespace xyDroidFolder
             this.Icon = Properties.Resources.xyfolder;
             this.Text = R.AppName;
 
-            treeView1.Visible = false;
-            listView1.Visible = false;
-            panelProgress.Visible = false;
+            panelWork.Visible = false;
             labelProgress.Text = "0/0";
 
             panel1.Width = qrSize;
@@ -146,9 +145,9 @@ namespace xyDroidFolder
 
         private void initFoldTree(TreeView treeView, string hostName)
         {
-            if (treeView.InvokeRequired)
+            if (panelWork.InvokeRequired)
             {
-                treeView.Invoke(new Action(() =>
+                panelWork.Invoke(new Action(() =>
                 {
                     initFoldTree(treeView, hostName);
                 }));
@@ -157,12 +156,18 @@ namespace xyDroidFolder
             {
                 treeView.Tag = hostName;
                 treeView.BeginUpdate();
+                treeView.Nodes.Clear();
                 TreeNode tn = treeView.Nodes.Add(
                     hostName + "(" + R.InitFolderNode + ")");
                 tn.ImageIndex = 3;
                 tn.SelectedImageIndex = 3;
                 treeView.EndUpdate();
+
+                panelWork.Visible = true;
                 treeView.Visible = true;
+
+                panelProgress.Visible = false;
+                listView1.Visible = false;
             }
         }
 
@@ -190,76 +195,7 @@ namespace xyDroidFolder
 
             if (NodeNeedGet(tn))
             {
-                if (tn.Level == 0)
-                {
-                    CommResult commResult =
-                        await droidFolderComm.GetInitFolder();
-
-                    string[] folders = commResult.resultDataDic[
-                        CmdPar.folders.ToString()
-                        ].Split("|");
-                    string[] files = commResult.resultDataDic[
-                        CmdPar.files.ToString()
-                        ].Split("|");
-
-                    tv.BeginUpdate();
-                    TreeNode TempTn;
-
-                    foreach (string folder in folders)
-                    {
-                        if (folder != "")
-                        {
-                            TempTn = tn.Nodes.Add(folder);
-                        }
-                    }
-
-                    tn.Text = tv.Tag.ToString();
-                    tv.EndUpdate();
-
-                    tn.Expand();
-
-                    //show files
-                    tn.Tag = files;
-                    showFiles(tn);
-                }
-                else
-                {
-                    string path = tn.FullPath.Replace(
-                        tv.Tag.ToString() + "\\", "");
-
-                    CommResult commResult =
-                        await droidFolderComm.GetFolder(path);
-
-
-                    string[] folders = commResult.resultDataDic[
-                        CmdPar.folders.ToString()
-                        ].Split("|");
-                    string[] files = commResult.resultDataDic[
-                        CmdPar.files.ToString()
-                        ].Split("|");
-
-                    tv.BeginUpdate();
-                    TreeNode TempTn;
-
-                    foreach (string folder in folders)
-                    {
-                        if (folder != "")
-                        {
-                            TempTn = tn.Nodes.Add(folder);
-                        }
-                    }
-
-                    tv.EndUpdate();
-
-                    if (folders.Length > 0)
-                    {
-                        tn.Expand();
-                    }
-
-                    //show files
-                    tn.Tag = files;
-                    showFiles(tn);
-                }
+                refreshNodeAsync(tn);
             }
             else
             {
@@ -335,7 +271,7 @@ namespace xyDroidFolder
         private async void btnUpload_Click(object sender, EventArgs e)
         {
             FileDialog dlg = new OpenFileDialog();
-            if(dlg.ShowDialog() ==DialogResult.OK)
+            if (dlg.ShowDialog() == DialogResult.OK)
             {
                 panel4.Enabled = false;
                 panel5.Enabled = false;
@@ -354,6 +290,8 @@ namespace xyDroidFolder
 
                 await droidFolderComm.SendFile(
                         localFile, remoteFile);
+
+                refreshNodeAsync(tn);
 
                 panel4.Enabled = true;
                 panel5.Enabled = true;
@@ -378,7 +316,8 @@ namespace xyDroidFolder
         {
             if (panelProgress.InvokeRequired)
             {
-                panelProgress.Invoke(new Action(() => {
+                panelProgress.Invoke(new Action(() =>
+                {
                     FileEventHandler(sender, e);
                 }));
             }
@@ -413,6 +352,63 @@ namespace xyDroidFolder
                         + "/" + progressBar1.Maximum.ToString("##,#");
                 }
             }
+        }
+
+        private void tsbRefreshCurrentNode_Click(object sender, EventArgs e)
+        {
+            if(listView1.Tag!=null)
+            {
+                TreeNode tn = listView1.Tag as TreeNode; 
+                refreshNodeAsync(tn);
+            }
+        }
+        private async Task refreshNodeAsync(TreeNode tn)
+        {
+            TreeView tv = treeView1;
+            CommResult commResult;
+            if (tn.Level == 0)
+            {
+                commResult =
+                        await droidFolderComm.GetInitFolder();
+                tn.Text = tv.Tag.ToString();
+            }
+            else
+            {
+                string path = tn.FullPath.Replace(
+                    tv.Tag.ToString() + "\\", "");
+                commResult =
+                    await droidFolderComm.GetFolder(path);
+            }
+
+
+            string[] folders = commResult.resultDataDic[
+                CmdPar.folders.ToString()
+                ].Split("|");
+            string[] files = commResult.resultDataDic[
+                CmdPar.files.ToString()
+                ].Split("|");
+
+            tv.BeginUpdate();
+            TreeNode TempTn;
+
+            foreach (string folder in folders)
+            {
+                if (folder != "")
+                {
+                    TempTn = tn.Nodes.Add(folder);
+                }
+            }
+
+            tv.EndUpdate();
+
+            if (folders.Length > 0)
+            {
+                tn.Expand();
+            }
+
+            //show files
+            tn.Tag = files;
+            showFiles(tn);
         }
     }
 }

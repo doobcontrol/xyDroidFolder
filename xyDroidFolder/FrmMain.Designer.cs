@@ -30,11 +30,15 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
-            panel2 = new Panel();
+            panelWork = new Panel();
             panel5 = new Panel();
+            panel7 = new Panel();
             listView1 = new ListView();
+            splitter1 = new Splitter();
             treeView1 = new TreeView();
             imageList1 = new ImageList(components);
+            toolStrip1 = new ToolStrip();
+            tsbRefreshCurrentNode = new ToolStripButton();
             panel3 = new Panel();
             panelProgress = new Panel();
             progressBar1 = new ProgressBar();
@@ -48,8 +52,10 @@
             comboBox1 = new ComboBox();
             pictureBox1 = new PictureBox();
             label1 = new Label();
-            panel2.SuspendLayout();
+            panelWork.SuspendLayout();
             panel5.SuspendLayout();
+            panel7.SuspendLayout();
+            toolStrip1.SuspendLayout();
             panel3.SuspendLayout();
             panelProgress.SuspendLayout();
             panel6.SuspendLayout();
@@ -58,35 +64,54 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
-            // panel2
+            // panelWork
             // 
-            panel2.Controls.Add(panel5);
-            panel2.Controls.Add(panel3);
-            panel2.Dock = DockStyle.Fill;
-            panel2.Location = new Point(200, 0);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(600, 450);
-            panel2.TabIndex = 3;
+            panelWork.Controls.Add(panel5);
+            panelWork.Controls.Add(panel3);
+            panelWork.Dock = DockStyle.Fill;
+            panelWork.Location = new Point(200, 0);
+            panelWork.Name = "panelWork";
+            panelWork.Size = new Size(600, 450);
+            panelWork.TabIndex = 3;
             // 
             // panel5
             // 
-            panel5.Controls.Add(listView1);
-            panel5.Controls.Add(treeView1);
+            panel5.Controls.Add(panel7);
+            panel5.Controls.Add(toolStrip1);
             panel5.Dock = DockStyle.Fill;
             panel5.Location = new Point(0, 0);
             panel5.Name = "panel5";
             panel5.Size = new Size(600, 415);
             panel5.TabIndex = 2;
             // 
+            // panel7
+            // 
+            panel7.Controls.Add(listView1);
+            panel7.Controls.Add(splitter1);
+            panel7.Controls.Add(treeView1);
+            panel7.Dock = DockStyle.Fill;
+            panel7.Location = new Point(0, 25);
+            panel7.Name = "panel7";
+            panel7.Size = new Size(600, 390);
+            panel7.TabIndex = 3;
+            // 
             // listView1
             // 
             listView1.Dock = DockStyle.Fill;
-            listView1.Location = new Point(256, 0);
+            listView1.Location = new Point(209, 0);
             listView1.Name = "listView1";
-            listView1.Size = new Size(344, 415);
+            listView1.Size = new Size(391, 390);
             listView1.TabIndex = 1;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
+            // 
+            // splitter1
+            // 
+            splitter1.Location = new Point(199, 0);
+            splitter1.Name = "splitter1";
+            splitter1.Size = new Size(10, 390);
+            splitter1.TabIndex = 3;
+            splitter1.TabStop = false;
             // 
             // treeView1
             // 
@@ -96,7 +121,7 @@
             treeView1.Location = new Point(0, 0);
             treeView1.Name = "treeView1";
             treeView1.SelectedImageIndex = 0;
-            treeView1.Size = new Size(256, 415);
+            treeView1.Size = new Size(199, 390);
             treeView1.TabIndex = 2;
             treeView1.NodeMouseClick += treeView1_NodeMouseClick;
             // 
@@ -109,6 +134,25 @@
             imageList1.Images.SetKeyName(1, "Folder-Open-icon.png");
             imageList1.Images.SetKeyName(2, "Document-icon.png");
             imageList1.Images.SetKeyName(3, "android-icon.png");
+            // 
+            // toolStrip1
+            // 
+            toolStrip1.Items.AddRange(new ToolStripItem[] { tsbRefreshCurrentNode });
+            toolStrip1.Location = new Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new Size(600, 25);
+            toolStrip1.TabIndex = 4;
+            toolStrip1.Text = "toolStrip1";
+            // 
+            // tsbRefreshCurrentNode
+            // 
+            tsbRefreshCurrentNode.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsbRefreshCurrentNode.Image = Properties.Resources.Refresh;
+            tsbRefreshCurrentNode.ImageTransparentColor = Color.Magenta;
+            tsbRefreshCurrentNode.Name = "tsbRefreshCurrentNode";
+            tsbRefreshCurrentNode.Size = new Size(23, 22);
+            tsbRefreshCurrentNode.Text = "toolStripButton1";
+            tsbRefreshCurrentNode.Click += tsbRefreshCurrentNode_Click;
             // 
             // panel3
             // 
@@ -244,13 +288,17 @@
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(panel2);
+            Controls.Add(panelWork);
             Controls.Add(panel1);
             Name = "FrmMain";
             Text = "FrmMain";
             Load += FrmMain_Load;
-            panel2.ResumeLayout(false);
+            panelWork.ResumeLayout(false);
             panel5.ResumeLayout(false);
+            panel5.PerformLayout();
+            panel7.ResumeLayout(false);
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
             panel3.ResumeLayout(false);
             panelProgress.ResumeLayout(false);
             panel6.ResumeLayout(false);
@@ -262,7 +310,7 @@
 
         #endregion
 
-        private Panel panel2;
+        private Panel panelWork;
         private Panel panel3;
         private Panel panel4;
         private Button btnExit;
@@ -280,5 +328,9 @@
         private Panel panel6;
         private Label labelProgress;
         private ComboBox comboBox1;
+        private ToolStrip toolStrip1;
+        private ToolStripButton tsbRefreshCurrentNode;
+        private Panel panel7;
+        private Splitter splitter1;
     }
 }
