@@ -25,6 +25,8 @@ namespace xyDroidFolder
 
         int qrSize = 200;
         int Port = 12919;
+        //stream receiver listen port for other side to connect
+        string streamReceiverPar = "12920";
 
         DroidFolderComm droidFolderComm;
 
@@ -81,7 +83,8 @@ namespace xyDroidFolder
         {
             droidFolderComm = new DroidFolderComm(
                 localIP, Port,
-                null, 0, DroidFolderRequestHandler
+                null, 0, DroidFolderRequestHandler,
+                FileEventHandler
                 );
 
             try
@@ -320,8 +323,8 @@ namespace xyDroidFolder
             }
             string receivedFile = Path.Combine(receivedPath, file); ;
 
-            //await xyPtoPEnd.ActiveGetFile(
-            //        requestfile, receivedFile);
+            await droidFolderComm.GetFile(
+                    receivedFile, requestfile, streamReceiverPar);
 
             panel4.Enabled = true;
             panel5.Enabled = true;
@@ -349,8 +352,8 @@ namespace xyDroidFolder
                     )
                     .Replace(treeView1.Tag.ToString() + "\\", "");
 
-                //await xyPtoPEnd.ActiveSendFile(
-                //        localFile, remoteFile);
+                await droidFolderComm.SendFile(
+                        localFile, remoteFile);
 
                 panel4.Enabled = true;
                 panel5.Enabled = true;
@@ -371,7 +374,7 @@ namespace xyDroidFolder
             }
         }
 
-        private void FileEventHandler(object? sender, XyCommFileEventArgs e)
+        private void FileEventHandler(object? sender, XyFileIOEventArgs e)
         {
             if (panelProgress.InvokeRequired)
             {
@@ -381,29 +384,34 @@ namespace xyDroidFolder
             }
             else
             {
-                if (e.Progress == 0)
+                switch (e.Type)
                 {
-                    progressBar1.Minimum = 0;
-                    progressBar1.Maximum = (int)e.Length;
-                    progressBar1.Value = 0;
-                    panelProgress.Visible = true;
+                    case FileIOEventType.start:
+                        progressBar1.Maximum = (int)e.Length;
+                        progressBar1.Value = 0;
+                        panelProgress.Visible = true;
+                        break;
+                    case FileIOEventType.end:
+                        panelProgress.Visible = false;
+                        progressBar1.Maximum = 0;
+                        progressBar1.Value = 0;
+                        break;
+                    case FileIOEventType.progress:
+                        if (panelProgress.Visible)
+                        {
+                            progressBar1.Value = (int)e.Progress;
+                        }
+                        break;
                 }
-                else if (e.Progress == e.Length)
+
+                if (panelProgress.Visible)
                 {
-                    progressBar1.Minimum = 0;
-                    progressBar1.Maximum = 0;
-                    progressBar1.Value = 0;
-                    panelProgress.Visible = false;
+                    labelProgress.Text = e.FileSendReceive.ToString() + ": " +
+                        "(" + ((float)progressBar1.Value / (float)progressBar1.Maximum)
+                        .ToString(("#0.00%")) + ") "
+                        + progressBar1.Value.ToString("##,#")
+                        + "/" + progressBar1.Maximum.ToString("##,#");
                 }
-                else if (progressBar1.Maximum > (int)e.Progress)
-                {
-                    progressBar1.Value = (int)e.Progress;
-                }
-                labelProgress.Text = e.FileSendReceive.ToString() + ": " +
-                    "(" + ((float)progressBar1.Value / (float)progressBar1.Maximum)
-                    .ToString(("#0.00%")) + ") "
-                    + progressBar1.Value.ToString("##,#")
-                    + "/" + progressBar1.Maximum.ToString("##,#");
             }
         }
     }

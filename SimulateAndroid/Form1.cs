@@ -9,8 +9,12 @@ namespace SimulateAndroid
 
         string localIP = "192.168.168.129";
         int localPort = 12921;
+        //stream receiver listen port for other side to connect
+        string streamReceiverPar = "12922";
+
         string remoteIP = "192.168.168.129"; //"192.168.168.129"  "192.168.168.1"
         int remotePort = 12919;
+
 
         public Form1()
         {
@@ -26,7 +30,8 @@ namespace SimulateAndroid
 
             droidFolderComm = new DroidFolderComm(
                 localIP, localPort,
-                remoteIP, remotePort, DroidFolderRequestHandler
+                remoteIP, remotePort, DroidFolderRequestHandler,
+                FileEventHandler
                 );
 
             try
@@ -135,28 +140,36 @@ namespace SimulateAndroid
                     showMsg("sent folder info: " + reqPath);
 
                     break;
-                //case XyPtoPCmd.ActiveGetFile:
-                //    string requestfile = Path.Combine(
-                //            path,
-                //            commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfile]);
+                case DroidFolderCmd.GetFile:
+                    string requestfile = Path.Combine(
+                            path,
+                            commData.cmdParDic[CmdPar.targetFile.ToString()]);
 
-                //    commData.cmdParDic[XyPtoPEnd.FolderparKey_requestfile]
-                //        = requestfile;
+                    commData.cmdParDic[CmdPar.targetFile.ToString()]
+                        = requestfile;
 
-                //    showMsg("start send file: " + requestfile);
+                    commResult.resultDataDic.Add(
+                        CmdPar.fileLength.ToString(),
+                        new FileInfo(requestfile).Length.ToString());
 
-                //    break;
-                //case XyPtoPCmd.ActiveSendFile:
-                //    string sendfile = Path.Combine(
-                //            path,
-                //            commData.cmdParDic[XyPtoPEnd.FolderparKey_sendfile]);
+                    showMsg("start send file: " + requestfile);
 
-                //    commData.cmdParDic[XyPtoPEnd.FolderparKey_sendfile]
-                //        = sendfile;
+                    break;
+                case DroidFolderCmd.SendFile:
+                    string sendfile = Path.Combine(
+                            path,
+                            commData.cmdParDic[CmdPar.targetFile.ToString()]);
 
-                //    showMsg("ready to receive file: " + sendfile);
+                    commData.cmdParDic[CmdPar.targetFile.ToString()]
+                        = sendfile;
 
-                //    break;
+                    commResult.resultDataDic.Add(
+                        CmdPar.streamReceiverPar.ToString(),
+                        streamReceiverPar);
+
+                    showMsg("ready to receive file: " + sendfile);
+
+                    break;
 
                 default:
                     break;
@@ -175,7 +188,7 @@ namespace SimulateAndroid
             }
         }
         
-        private void FileEventHandler(object? sender, XyCommFileEventArgs e)
+        private void FileEventHandler(object? sender, XyFileIOEventArgs e)
         {
             if (panelProgress.InvokeRequired)
             {
@@ -185,29 +198,34 @@ namespace SimulateAndroid
             }
             else
             {
-                if (e.Progress == 0)
+                switch (e.Type)
                 {
-                    progressBar1.Minimum = 0;
-                    progressBar1.Maximum = (int)e.Length;
-                    progressBar1.Value = 0;
-                    panelProgress.Visible = true;
+                    case FileIOEventType.start:
+                        progressBar1.Maximum = (int)e.Length;
+                        progressBar1.Value = 0;
+                        panelProgress.Visible = true;
+                        break;
+                    case FileIOEventType.end:
+                        panelProgress.Visible = false;
+                        progressBar1.Maximum = 0;
+                        progressBar1.Value = 0;
+                        break;
+                    case FileIOEventType.progress:
+                        if (panelProgress.Visible)
+                        {
+                            progressBar1.Value = (int)e.Progress;
+                        }
+                        break;
                 }
-                else if (e.Progress == e.Length)
+
+                if (panelProgress.Visible)
                 {
-                    progressBar1.Minimum = 0;
-                    progressBar1.Maximum = 0;
-                    progressBar1.Value = 0;
-                    panelProgress.Visible = false;
+                    labelProgress.Text = e.FileSendReceive.ToString() + ": " +
+                        "(" + ((float)progressBar1.Value / (float)progressBar1.Maximum)
+                        .ToString(("#0.00%")) + ") "
+                        + progressBar1.Value.ToString("##,#")
+                        + "/" + progressBar1.Maximum.ToString("##,#");
                 }
-                else if (progressBar1.Maximum > (int)e.Progress)
-                {
-                    progressBar1.Value = (int)e.Progress;
-                }
-                labelProgress.Text = e.FileSendReceive.ToString() + ": " +
-                    "(" + ((float)progressBar1.Value / (float)progressBar1.Maximum)
-                    .ToString(("#0.00%")) + ") "
-                    + progressBar1.Value.ToString("##,#") 
-                    + "/" + progressBar1.Maximum.ToString("##,#");
             }
         }
     }
