@@ -29,7 +29,7 @@ namespace xyDroidFolder
         //stream receiver listen port for other side to connect
         string streamReceiverPar = "12920";
 
-        DroidFolderComm droidFolderComm;
+        DroidFolderComm? droidFolderComm;
 
         public FrmMain()
         {
@@ -69,9 +69,9 @@ namespace xyDroidFolder
             comboBox1.SelectedIndexChanged += localIP_SelectedIndexChanged;
             comboBox1.SelectedIndex = 0;
         }
-        private void localIP_SelectedIndexChanged(object sender, EventArgs e)
+        private void localIP_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            ComboBox cb = sender as ComboBox;
+            ComboBox cb = comboBox1;
             if (cb.SelectedIndex != -1)
             {
                 setLocalIpEndPoint(
@@ -192,12 +192,12 @@ namespace xyDroidFolder
         private async void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             TreeNode tn = e.Node;
-            TreeView tv = sender as TreeView;
+            TreeView tv = treeView1;
 
 
             if (NodeNeedGet(tn))
             {
-                refreshNodeAsync(tn);
+                await refreshNodeAsync(tn);
             }
             else
             {
@@ -393,6 +393,7 @@ namespace xyDroidFolder
             tv.BeginUpdate();
             TreeNode TempTn;
 
+            tn.Nodes.Clear();
             foreach (string folder in folders)
             {
                 if (folder != "")
