@@ -135,4 +135,7 @@
   <data name="ScanTitle" xml:space="preserve">
     <value>扫描此条码连接</value>
   </data>
+  <data name="tsbRefreshCurrentNode_tooltip" xml:space="preserve">
+    <value>刷新当前节点内容</value>
+  </data>
 </root>

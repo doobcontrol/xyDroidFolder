@@ -125,6 +125,15 @@ namespace xyDroidFolder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Refresh current node content.
+        /// </summary>
+        internal static string tsbRefreshCurrentNode_tooltip {
+            get {
+                return ResourceManager.GetString("tsbRefreshCurrentNode_tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon xyfolder {

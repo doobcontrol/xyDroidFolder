@@ -40,6 +40,8 @@ namespace xyDroidFolder
             this.Icon = Properties.Resources.xyfolder;
             this.Text = R.AppName;
 
+            tsbRefreshCurrentNode.ToolTipText = R.tsbRefreshCurrentNode_tooltip;
+
             panelWork.Visible = false;
             labelProgress.Text = "0/0";
 

@@ -45,5 +45,7 @@ namespace xyDroidFolder
             => ResourceManager.GetString("FileBtn_Download");
         static public string? FileBtn_Upload
             => ResourceManager.GetString("FileBtn_Upload");
+        static public string? tsbRefreshCurrentNode_tooltip
+            => ResourceManager.GetString("tsbRefreshCurrentNode_tooltip");
     }
 }
