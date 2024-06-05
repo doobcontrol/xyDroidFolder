@@ -191,6 +191,8 @@ namespace xyDroidFolder
                 treeView.Visible = true;
 
                 panelProgress.Visible = false;
+                listView1.Tag = null;
+                listView1.Items.Clear();
                 listView1.Visible = false;
             }
         }
