@@ -139,9 +139,31 @@ namespace xyDroidFolder
                     initFoldTree(
                         treeView1,
                         commData.cmdParDic[CmdPar.hostName.ToString()]);
+                    recoverUi();
                     break;
                 default:
                     break;
+            }
+        }
+        //from test fail(all item disabbled)
+        private void recoverUi()
+        {
+
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() =>
+                {
+                    recoverUi();
+                }));
+            }
+            else
+            {
+                panel4.Enabled = true;
+                panel5.Enabled = true;
+                panel6.Enabled = true;
+                ControlBox = true;
+
+                panelProgress.Visible = false;
             }
         }
 
