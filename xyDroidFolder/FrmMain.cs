@@ -164,6 +164,9 @@ namespace xyDroidFolder
                 ControlBox = true;
 
                 panelProgress.Visible = false;
+
+                btnDownload.Enabled = false;
+                btnUpload.Enabled = false;
             }
         }
 
