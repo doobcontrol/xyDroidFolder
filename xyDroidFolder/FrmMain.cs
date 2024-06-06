@@ -53,8 +53,12 @@ namespace xyDroidFolder
             btnUpload.Text = R.FileBtn_Upload;
             label1.Text = R.ScanTitle;
 
+            lbSelectedTargetPath.Text = null;
+
             btnDownload.Enabled = false;
             btnUpload.Enabled = false;
+
+            panelTargetContent.Dock = DockStyle.Fill;
 
             if (isDebug)
             {
@@ -197,6 +201,8 @@ namespace xyDroidFolder
                 listView1.Tag = null;
                 listView1.Items.Clear();
                 listView1.Visible = false;
+
+                lbSelectedTargetPath.Text = null;
             }
         }
 
@@ -221,6 +227,7 @@ namespace xyDroidFolder
             TreeNode tn = e.Node;
             TreeView tv = treeView1;
 
+            lbSelectedTargetPath.Text = tn.FullPath;
 
             if (NodeNeedGet(tn))
             {
@@ -400,6 +407,7 @@ namespace xyDroidFolder
                 commResult =
                         await droidFolderComm.GetInitFolder();
                 tn.Text = tv.Tag.ToString();
+                lbSelectedTargetPath.Text = tn.FullPath;
             }
             else
             {

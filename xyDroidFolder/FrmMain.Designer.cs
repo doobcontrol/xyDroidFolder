@@ -32,7 +32,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             panelWork = new Panel();
             panel5 = new Panel();
-            panel7 = new Panel();
+            lbSelectedTargetPath = new Label();
+            panelTargetContent = new Panel();
             listView1 = new ListView();
             splitter1 = new Splitter();
             treeView1 = new TreeView();
@@ -54,7 +55,7 @@
             label1 = new Label();
             panelWork.SuspendLayout();
             panel5.SuspendLayout();
-            panel7.SuspendLayout();
+            panelTargetContent.SuspendLayout();
             toolStrip1.SuspendLayout();
             panel3.SuspendLayout();
             panelProgress.SuspendLayout();
@@ -76,7 +77,8 @@
             // 
             // panel5
             // 
-            panel5.Controls.Add(panel7);
+            panel5.Controls.Add(panelTargetContent);
+            panel5.Controls.Add(lbSelectedTargetPath);
             panel5.Controls.Add(toolStrip1);
             panel5.Dock = DockStyle.Fill;
             panel5.Location = new Point(0, 0);
@@ -84,23 +86,31 @@
             panel5.Size = new Size(600, 415);
             panel5.TabIndex = 2;
             // 
-            // panel7
+            // lbSelectedTargetPath
             // 
-            panel7.Controls.Add(listView1);
-            panel7.Controls.Add(splitter1);
-            panel7.Controls.Add(treeView1);
-            panel7.Dock = DockStyle.Fill;
-            panel7.Location = new Point(0, 25);
-            panel7.Name = "panel7";
-            panel7.Size = new Size(600, 390);
-            panel7.TabIndex = 3;
+            lbSelectedTargetPath.Dock = DockStyle.Top;
+            lbSelectedTargetPath.Location = new Point(0, 25);
+            lbSelectedTargetPath.Name = "lbSelectedTargetPath";
+            lbSelectedTargetPath.Size = new Size(600, 17);
+            lbSelectedTargetPath.TabIndex = 5;
+            lbSelectedTargetPath.Text = "label2";
+            // 
+            // panelTargetContent
+            // 
+            panelTargetContent.Controls.Add(listView1);
+            panelTargetContent.Controls.Add(splitter1);
+            panelTargetContent.Controls.Add(treeView1);
+            panelTargetContent.Location = new Point(60, 138);
+            panelTargetContent.Name = "panelTargetContent";
+            panelTargetContent.Size = new Size(447, 243);
+            panelTargetContent.TabIndex = 3;
             // 
             // listView1
             // 
             listView1.Dock = DockStyle.Fill;
             listView1.Location = new Point(209, 0);
             listView1.Name = "listView1";
-            listView1.Size = new Size(391, 390);
+            listView1.Size = new Size(238, 243);
             listView1.TabIndex = 1;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
@@ -109,7 +119,7 @@
             // 
             splitter1.Location = new Point(199, 0);
             splitter1.Name = "splitter1";
-            splitter1.Size = new Size(10, 390);
+            splitter1.Size = new Size(10, 243);
             splitter1.TabIndex = 3;
             splitter1.TabStop = false;
             // 
@@ -121,7 +131,7 @@
             treeView1.Location = new Point(0, 0);
             treeView1.Name = "treeView1";
             treeView1.SelectedImageIndex = 0;
-            treeView1.Size = new Size(199, 390);
+            treeView1.Size = new Size(199, 243);
             treeView1.TabIndex = 2;
             treeView1.NodeMouseClick += treeView1_NodeMouseClick;
             // 
@@ -296,7 +306,7 @@
             panelWork.ResumeLayout(false);
             panel5.ResumeLayout(false);
             panel5.PerformLayout();
-            panel7.ResumeLayout(false);
+            panelTargetContent.ResumeLayout(false);
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
             panel3.ResumeLayout(false);
@@ -330,7 +340,8 @@
         private ComboBox comboBox1;
         private ToolStrip toolStrip1;
         private ToolStripButton tsbRefreshCurrentNode;
-        private Panel panel7;
+        private Panel panelTargetContent;
         private Splitter splitter1;
+        private Label lbSelectedTargetPath;
     }
 }
