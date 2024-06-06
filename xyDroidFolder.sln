@@ -7,6 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xyDroidFolder", "xyDroidFol
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E9595A25-5A1F-4F4F-A6AC-3496C7D2AA4B}"
 	ProjectSection(SolutionItems) = preProject
+		note.txt = note.txt
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -14,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xyDroidFolder.comm", "xyDro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimulateAndroid", "SimulateAndroid\SimulateAndroid.csproj", "{2F8258DC-94C9-44E8-9841-F30C515F66CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xySoft.comm", "xySoft.comm\xySoft.comm.csproj", "{69BFF434-7080-41F6-BB69-A571ED6D4F6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xySoft.comm", "xySoft.comm\xySoft.comm.csproj", "{69BFF434-7080-41F6-BB69-A571ED6D4F6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

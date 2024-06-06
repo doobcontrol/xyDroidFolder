@@ -1,0 +1,5 @@
+20240606 why a class in a NuGet Package became not  found
+a error of ZXing not found occurred
+ZXing is in a NuGet Package, why not found
+turn out my NuGet work directory set to a location that not available temporary
+recover the location solved this
