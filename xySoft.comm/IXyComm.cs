@@ -10,6 +10,7 @@ namespace xySoft.comm
     {
         Task<string> sendForResponseAsync(string sendData);
         void startListen();
+        void stopListen();
         void set(Dictionary<string, string> setDic);
         Task prepareStreamReceiver(
             string file, 

@@ -139,9 +139,10 @@ namespace xySoft.comm
         }
 
         bool stopListen = true;
+        UdpClient udpServer;
         public void startListen()
         {
-            UdpClient udpServer = new UdpClient();
+            udpServer = new UdpClient();
             udpServer.ExclusiveAddressUse = true;
             udpServer.Client.Bind(localPoint);
 
@@ -180,6 +181,9 @@ namespace xySoft.comm
                 }
                 catch (Exception e)
                 {
+                }
+                finally {
+                    udpServer = null;
                 }
             }
             );
@@ -541,6 +545,15 @@ namespace xySoft.comm
         static public void d(string msg)
         {
             System.Diagnostics.Debug.WriteLine(msg);
+        }
+
+        void IXyComm.stopListen()
+        {
+            stopListen = true;
+            if (udpServer != null)
+            {
+                udpServer.Client.Close();
+            }
         }
     }
     public enum XyUdpCommTargetSetPar

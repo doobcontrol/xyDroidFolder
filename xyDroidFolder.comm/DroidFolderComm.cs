@@ -28,6 +28,13 @@ namespace xyDroidFolder.comm
             _xyFileIOEventHandler = xyFileIOEventHandler;
             myIXyComm.startListen();
         }
+        public void clean()
+        {
+            if (myIXyComm != null)
+            {
+                myIXyComm.stopListen();
+            }
+        }
 
         private string XyCommRequestHandler(string receivedString)
         {

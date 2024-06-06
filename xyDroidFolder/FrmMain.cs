@@ -22,7 +22,7 @@ namespace xyDroidFolder
 {
     public partial class FrmMain : Form
     {
-        bool isDebug = true; //true / false
+        bool isDebug = false; //true / false
 
         int qrSize = 200;
         int Port = 12919;
@@ -86,6 +86,10 @@ namespace xyDroidFolder
 
         private void setLocalIpEndPoint(string localIP)
         {
+            if (droidFolderComm != null)
+            {
+                droidFolderComm.clean();
+            }
             droidFolderComm = new DroidFolderComm(
                 localIP, Port,
                 null, 0, DroidFolderRequestHandler,
