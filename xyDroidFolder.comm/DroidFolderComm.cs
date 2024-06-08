@@ -108,6 +108,11 @@ namespace xyDroidFolder.comm
                             FileEventHandler);
 
                         break;
+                    case DroidFolderCmd.SendText:
+                        commData.cmdParDic[CmdPar.text.ToString()] = 
+                            decodeParString(commData.cmdParDic[CmdPar.text.ToString()]);
+                        _droidFolderRequestHandler(commData, commResult);
+                        break;
 
                     default:
                         commResult.resultDataDic.Add(
@@ -259,6 +264,51 @@ namespace xyDroidFolder.comm
                     )
                 );
         }
+       
+        public async Task<CommResult> SendText(string sendText)
+        {
+            CommData commData = new CommData(DroidFolderCmd.SendText);
+            commData.cmdParDic.Add(CmdPar.text.ToString(), encodeParString(sendText));
+
+            return await XyCommRequestAsync(commData);
+        }
+
+        #region encode/decode par string
+
+        static Dictionary<string, string> encodeDic = new Dictionary<string, string>()
+        {
+            {",", "xyCommA" },
+            { "=", "xyEquaL" }
+        };
+
+        static Dictionary<string, string> dncodeDic = new Dictionary<string, string>()
+        {
+            {"xyCommA", "," },
+            { "xyEquaL", "=" }
+        };
+
+        static public string encodeParString(string parString)
+        {
+            return stringReplace(parString, encodeDic);
+        }
+        static public string decodeParString(string parString)
+        {
+            return stringReplace(parString, dncodeDic);
+        }
+        static public string stringReplace(string rString, 
+            Dictionary<string, string> rDic)
+        {
+            string retString = rString;
+
+            foreach (string key in rDic.Keys)
+            {
+                retString = retString.Replace(key, rDic[key]);
+            }
+
+            return retString;
+        }
+
+        #endregion
 
         //debug
         static public void d(string msg)
@@ -272,7 +322,8 @@ namespace xyDroidFolder.comm
         GetInitFolder,
         GetFolder,
         GetFile,
-        SendFile
+        SendFile,
+        SendText
     }
     public enum CmdPar
     {
@@ -284,6 +335,7 @@ namespace xyDroidFolder.comm
         hostName,
         requestPath,
         targetFile,
+        text,
         fileLength,
         streamReceiverPar,
         folders,

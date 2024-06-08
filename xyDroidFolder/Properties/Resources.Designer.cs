@@ -79,6 +79,16 @@ namespace xyDroidFolder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap clipboard_icon {
+            get {
+                object obj = ResourceManager.GetObject("clipboard-icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Download.
         /// </summary>
         internal static string FileBtn_Download {
@@ -121,6 +131,24 @@ namespace xyDroidFolder.Properties {
         internal static string ScanTitle {
             get {
                 return ResourceManager.GetString("ScanTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Whatching clipborad. Click to stop.
+        /// </summary>
+        internal static string tsbClipboardWatch_tooltip_inWatch {
+            get {
+                return ResourceManager.GetString("tsbClipboardWatch_tooltip_inWatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click to start send and receive clipboard content.
+        /// </summary>
+        internal static string tsbClipboardWatch_tooltip_notWatch {
+            get {
+                return ResourceManager.GetString("tsbClipboardWatch_tooltip_notWatch", resourceCulture);
             }
         }
         

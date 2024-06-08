@@ -1,4 +1,5 @@
 using System.IO;
+using xyDroidFolder.clipboard;
 using xyDroidFolder.comm;
 
 namespace SimulateAndroid
@@ -170,6 +171,14 @@ namespace SimulateAndroid
                     showMsg("ready to receive file: " + sendfile);
 
                     break;
+                case DroidFolderCmd.SendText:
+                    //do not check if need handle for now
+                    string receivedText =
+                        commData.cmdParDic[CmdPar.text.ToString()];
+                    showMsg("receive text: " + receivedText);
+                    putToClipboard(receivedText);
+
+                    break;
 
                 default:
                     break;
@@ -228,5 +237,56 @@ namespace SimulateAndroid
                 }
             }
         }
+
+
+        #region watch clipboard
+
+        bool InClipboardMonitor = true;
+
+        ClipboardMonitor cm;
+        protected override void WndProc(ref Message m)
+        {
+            if (InClipboardMonitor && cm != null)
+            {
+                if (!cm.WndProc(ref m))
+                {
+                    base.WndProc(ref m);
+                }
+            }
+            else
+            {
+                base.WndProc(ref m);
+            }
+        }
+
+        private void changeMonitorStatus(bool inClipboardMonitor)
+        {
+            if (cm == null)
+            {
+                cm = new ClipboardMonitor();
+                cm.ClipboardMsgHandler += ClipboardText_get;
+            }
+            InClipboardMonitor = inClipboardMonitor;
+            cm.changeMonitorStatus(InClipboardMonitor, Handle);
+        }
+        private void ClipboardText_get(object sender, EventArgs e)
+        {
+            if (!InClipboardMonitor)
+            {
+                return;
+            }
+            string ClipboardString = ((ClipboardMonitor)sender).ClipboardString;
+            if (ClipboardString != null && InClipboardMonitor)
+            {
+                droidFolderComm.SendText(ClipboardString);
+            }
+        }
+        private void putToClipboard(string putString)
+        {
+            changeMonitorStatus(false);
+            Clipboard.SetText("SimulateAndroid:" + putString);
+            changeMonitorStatus(true);
+        }
+        #endregion
     }
 }

@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\xyDroidFolder.clipboard\xyDroidFolder.clipboard.csproj" />
     <ProjectReference Include="..\xyDroidFolder.comm\xyDroidFolder.comm.csproj" />
   </ItemGroup>
 

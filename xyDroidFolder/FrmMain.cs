@@ -17,12 +17,13 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using TreeView = System.Windows.Forms.TreeView;
 using ComboBox = System.Windows.Forms.ComboBox;
 using System.Reflection;
+using xyDroidFolder.clipboard;
 
 namespace xyDroidFolder
 {
     public partial class FrmMain : Form
     {
-        bool isDebug = false; //true / false
+        bool isDebug = true; //true / false
 
         int qrSize = 200;
         int Port = 12919;
@@ -35,12 +36,15 @@ namespace xyDroidFolder
         {
             InitializeComponent();
 
-            R.setCulture(""); //zh-CN
+            R.setCulture("zh-CN"); //zh-CN
 
             this.Icon = Properties.Resources.xyfolder;
             this.Text = R.AppName;
 
             tsbRefreshCurrentNode.ToolTipText = R.tsbRefreshCurrentNode_tooltip;
+
+            tsbClipboardWatch.Checked = false;
+            tsbClipboardWatch.ToolTipText = R.tsbClipboardWatch_tooltip_notWatch;
 
             panelWork.Visible = false;
             labelProgress.Text = "0/0";
@@ -148,6 +152,12 @@ namespace xyDroidFolder
                         treeView1,
                         commData.cmdParDic[CmdPar.hostName.ToString()]);
                     recoverUi();
+                    break;
+                case DroidFolderCmd.SendText:
+                    //do not check if need handle for now
+                    string receivedText =
+                        commData.cmdParDic[CmdPar.text.ToString()];
+                    putToClipboard(receivedText);
                     break;
                 default:
                     break;
@@ -396,9 +406,9 @@ namespace xyDroidFolder
 
         private void tsbRefreshCurrentNode_Click(object sender, EventArgs e)
         {
-            if(listView1.Tag!=null)
+            if (listView1.Tag != null)
             {
-                TreeNode tn = listView1.Tag as TreeNode; 
+                TreeNode tn = listView1.Tag as TreeNode;
                 refreshNodeAsync(tn);
             }
         }
@@ -452,5 +462,71 @@ namespace xyDroidFolder
             tn.Tag = files;
             showFiles(tn);
         }
+
+        private void tsbClipboardWatch_CheckedChanged(object sender, EventArgs e)
+        {
+            if (tsbClipboardWatch.Checked)
+            {
+                tsbClipboardWatch.ToolTipText = R.tsbClipboardWatch_tooltip_inWatch;
+            }
+            else
+            {
+                tsbClipboardWatch.ToolTipText = R.tsbClipboardWatch_tooltip_notWatch;
+            }
+
+            changeMonitorStatus(tsbClipboardWatch.Checked);
+        }
+
+        #region watch clipboard
+
+        bool InClipboardMonitor = false;
+
+        ClipboardMonitor cm;
+        protected override void WndProc(ref Message m)
+        {
+            if (InClipboardMonitor && cm != null)
+            {
+                if (!cm.WndProc(ref m))
+                {
+                    base.WndProc(ref m);
+                }
+            }
+            else
+            {
+                base.WndProc(ref m);
+            }
+        }
+
+        private void changeMonitorStatus(bool inClipboardMonitor)
+        {
+            if (cm == null)
+            {
+                cm = new ClipboardMonitor();
+                cm.ClipboardMsgHandler += ClipboardText_get;
+            }
+            InClipboardMonitor = inClipboardMonitor;
+            cm.changeMonitorStatus(InClipboardMonitor, Handle);
+        }
+        private void ClipboardText_get(object sender, EventArgs e)
+        {
+            if (!InClipboardMonitor)
+            {
+                return;
+            }
+
+            string ClipboardString = ((ClipboardMonitor)sender).ClipboardString;
+            if (ClipboardString != null && InClipboardMonitor)
+            {
+                droidFolderComm.SendText(ClipboardString);
+            }
+
+        }
+        private void putToClipboard(string putString)
+        {
+            changeMonitorStatus(false);
+            Clipboard.SetText("xyDroidFolder:" + putString);
+            changeMonitorStatus(true);
+        }
+        #endregion
     }
 }

@@ -47,5 +47,9 @@ namespace xyDroidFolder
             => ResourceManager.GetString("FileBtn_Upload");
         static public string? tsbRefreshCurrentNode_tooltip
             => ResourceManager.GetString("tsbRefreshCurrentNode_tooltip");
+        static public string? tsbClipboardWatch_tooltip_notWatch
+            => ResourceManager.GetString("tsbClipboardWatch_tooltip_notWatch");
+        static public string? tsbClipboardWatch_tooltip_inWatch
+            => ResourceManager.GetString("tsbClipboardWatch_tooltip_inWatch");
     }
 }

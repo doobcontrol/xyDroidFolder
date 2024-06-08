@@ -32,14 +32,15 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             panelWork = new Panel();
             panel5 = new Panel();
-            lbSelectedTargetPath = new Label();
             panelTargetContent = new Panel();
             listView1 = new ListView();
             splitter1 = new Splitter();
             treeView1 = new TreeView();
             imageList1 = new ImageList(components);
+            lbSelectedTargetPath = new Label();
             toolStrip1 = new ToolStrip();
             tsbRefreshCurrentNode = new ToolStripButton();
+            tsbClipboardWatch = new ToolStripButton();
             panel3 = new Panel();
             panelProgress = new Panel();
             progressBar1 = new ProgressBar();
@@ -85,15 +86,6 @@
             panel5.Name = "panel5";
             panel5.Size = new Size(600, 415);
             panel5.TabIndex = 2;
-            // 
-            // lbSelectedTargetPath
-            // 
-            lbSelectedTargetPath.Dock = DockStyle.Top;
-            lbSelectedTargetPath.Location = new Point(0, 25);
-            lbSelectedTargetPath.Name = "lbSelectedTargetPath";
-            lbSelectedTargetPath.Size = new Size(600, 17);
-            lbSelectedTargetPath.TabIndex = 5;
-            lbSelectedTargetPath.Text = "label2";
             // 
             // panelTargetContent
             // 
@@ -145,9 +137,18 @@
             imageList1.Images.SetKeyName(2, "Document-icon.png");
             imageList1.Images.SetKeyName(3, "android-icon.png");
             // 
+            // lbSelectedTargetPath
+            // 
+            lbSelectedTargetPath.Dock = DockStyle.Top;
+            lbSelectedTargetPath.Location = new Point(0, 25);
+            lbSelectedTargetPath.Name = "lbSelectedTargetPath";
+            lbSelectedTargetPath.Size = new Size(600, 17);
+            lbSelectedTargetPath.TabIndex = 5;
+            lbSelectedTargetPath.Text = "label2";
+            // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new ToolStripItem[] { tsbRefreshCurrentNode });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { tsbRefreshCurrentNode, tsbClipboardWatch });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(600, 25);
@@ -163,6 +164,18 @@
             tsbRefreshCurrentNode.Size = new Size(23, 22);
             tsbRefreshCurrentNode.Text = "toolStripButton1";
             tsbRefreshCurrentNode.Click += tsbRefreshCurrentNode_Click;
+            // 
+            // tsbClipboardWatch
+            // 
+            tsbClipboardWatch.CheckOnClick = true;
+            tsbClipboardWatch.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsbClipboardWatch.Image = Properties.Resources.clipboard_icon;
+            tsbClipboardWatch.ImageTransparentColor = Color.Magenta;
+            tsbClipboardWatch.Name = "tsbClipboardWatch";
+            tsbClipboardWatch.Size = new Size(23, 22);
+            tsbClipboardWatch.Text = "toolStripButton1";
+            tsbClipboardWatch.ToolTipText = "start/stop watch clipboard";
+            tsbClipboardWatch.CheckedChanged += tsbClipboardWatch_CheckedChanged;
             // 
             // panel3
             // 
@@ -343,5 +356,6 @@
         private Panel panelTargetContent;
         private Splitter splitter1;
         private Label lbSelectedTargetPath;
+        private ToolStripButton tsbClipboardWatch;
     }
 }

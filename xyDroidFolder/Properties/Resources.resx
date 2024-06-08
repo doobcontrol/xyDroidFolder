@@ -117,15 +117,21 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppName" xml:space="preserve">
+    <value>Android file tool</value>
+  </data>
   <data name="FileBtn_Upload" xml:space="preserve">
     <value>Upload</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="xyfolder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xyfolder.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="tsbRefreshCurrentNode_tooltip" xml:space="preserve">
+    <value>Refresh current node content</value>
   </data>
   <data name="ScanTitle" xml:space="preserve">
     <value>Scan this QR to connect</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="FileBtn_Download" xml:space="preserve">
     <value>Download</value>
@@ -136,13 +142,16 @@
   <data name="App_Exit" xml:space="preserve">
     <value>Exit</value>
   </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Android file tool</value>
+  <data name="xyfolder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xyfolder.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="clipboard-icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\clipboard-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="tsbRefreshCurrentNode_tooltip" xml:space="preserve">
-    <value>Refresh current node content</value>
+  <data name="tsbClipboardWatch_tooltip_inWatch" xml:space="preserve">
+    <value>Whatching clipborad. Click to stop</value>
+  </data>
+  <data name="tsbClipboardWatch_tooltip_notWatch" xml:space="preserve">
+    <value>Click to start send and receive clipboard content</value>
   </data>
 </root>

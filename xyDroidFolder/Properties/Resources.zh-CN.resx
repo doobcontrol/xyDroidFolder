@@ -135,6 +135,12 @@
   <data name="ScanTitle" xml:space="preserve">
     <value>扫描此条码连接</value>
   </data>
+  <data name="tsbClipboardWatch_tooltip_inWatch" xml:space="preserve">
+    <value>剪贴板监视中，点击停止监视</value>
+  </data>
+  <data name="tsbClipboardWatch_tooltip_notWatch" xml:space="preserve">
+    <value>点击开始收发剪贴板内容</value>
+  </data>
   <data name="tsbRefreshCurrentNode_tooltip" xml:space="preserve">
     <value>刷新当前节点内容</value>
   </data>
