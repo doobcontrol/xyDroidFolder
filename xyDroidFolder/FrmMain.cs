@@ -512,6 +512,7 @@ namespace xyDroidFolder
             if (cm == null)
             {
                 cm = new ClipboardMonitor();
+                cm.ClipboardMsgHandler += ClipboardText_get;
             }
 
             InClipboardMonitor = inClipboardMonitor;
