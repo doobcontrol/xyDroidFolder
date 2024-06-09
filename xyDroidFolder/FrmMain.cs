@@ -18,12 +18,13 @@ using TreeView = System.Windows.Forms.TreeView;
 using ComboBox = System.Windows.Forms.ComboBox;
 using System.Reflection;
 using xyDroidFolder.clipboard;
+using xySoft.log;
 
 namespace xyDroidFolder
 {
     public partial class FrmMain : Form
     {
-        bool isDebug = true; //true / false
+        bool isDebug = false; //true / false
 
         int qrSize = 200;
         int Port = 12919;
@@ -145,22 +146,31 @@ namespace xyDroidFolder
 
         private void DroidFolderRequestHandler(CommData commData, CommResult commResult)
         {
-            switch (commData.cmd)
+            try
             {
-                case DroidFolderCmd.Register:
-                    initFoldTree(
-                        treeView1,
-                        commData.cmdParDic[CmdPar.hostName.ToString()]);
-                    recoverUi();
-                    break;
-                case DroidFolderCmd.SendText:
-                    //do not check if need handle for now
-                    string receivedText =
-                        commData.cmdParDic[CmdPar.text.ToString()];
-                    putToClipboard(receivedText);
-                    break;
-                default:
-                    break;
+                XyLog.log("Request:" + commData.cmd.ToString());
+                switch (commData.cmd)
+                {
+                    case DroidFolderCmd.Register:
+                        initFoldTree(
+                            treeView1,
+                            commData.cmdParDic[CmdPar.hostName.ToString()]);
+                        recoverUi();
+                        break;
+                    case DroidFolderCmd.SendText:
+                        //do not check if need handle for now
+                        string receivedText =
+                            commData.cmdParDic[CmdPar.text.ToString()];
+                        putToClipboard(receivedText);
+                        XyLog.log("putToClipboard:" + receivedText);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch(Exception e)
+            {
+                XyLog.log(e);
             }
         }
         //from test fail(all item disabbled)
@@ -502,8 +512,8 @@ namespace xyDroidFolder
             if (cm == null)
             {
                 cm = new ClipboardMonitor();
-                cm.ClipboardMsgHandler += ClipboardText_get;
             }
+
             InClipboardMonitor = inClipboardMonitor;
             cm.changeMonitorStatus(InClipboardMonitor, Handle);
         }
@@ -523,9 +533,18 @@ namespace xyDroidFolder
         }
         private void putToClipboard(string putString)
         {
-            changeMonitorStatus(false);
-            Clipboard.SetText("xyDroidFolder:" + putString);
-            changeMonitorStatus(true);
+            bool tempBool = InClipboardMonitor;
+            InClipboardMonitor = false;
+
+            //deal with "Current thread must be set to single thread apartment (STA)" error
+            Thread thread = new Thread(new ThreadStart(() => {
+                Clipboard.SetText(putString);
+            }));
+            thread.SetApartmentState(ApartmentState.STA); //important
+            thread.Start();
+            thread.Join(); //Wait for the thread to end
+
+            InClipboardMonitor = tempBool;
         }
         #endregion
     }
