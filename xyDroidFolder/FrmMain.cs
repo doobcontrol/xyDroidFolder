@@ -148,7 +148,6 @@ namespace xyDroidFolder
         {
             try
             {
-                XyLog.log("Request:" + commData.cmd.ToString());
                 switch (commData.cmd)
                 {
                     case DroidFolderCmd.Register:
@@ -162,7 +161,6 @@ namespace xyDroidFolder
                         string receivedText =
                             commData.cmdParDic[CmdPar.text.ToString()];
                         putToClipboard(receivedText);
-                        XyLog.log("putToClipboard:" + receivedText);
                         break;
                     default:
                         break;
