@@ -175,4 +175,10 @@
   <data name="Upload_succeed_msg" xml:space="preserve">
     <value>Upload succeed: </value>
   </data>
+  <data name="Receive_file_progress" xml:space="preserve">
+    <value>Receive progress：</value>
+  </data>
+  <data name="Send_file_progress" xml:space="preserve">
+    <value>Send progress: </value>
+  </data>
 </root>

@@ -65,5 +65,10 @@ namespace xyDroidFolder
             => ResourceManager.GetString("Getting_folder_content_msg");
         static public string? Sent_clipboard_text_msg
             => ResourceManager.GetString("Sent_clipboard_text_msg");
+        static public string? Send_file_progress
+            => ResourceManager.GetString("Send_file_progress");
+        static public string? Receive_file_progress
+            => ResourceManager.GetString("Receive_file_progress"); 
+
     }
 }

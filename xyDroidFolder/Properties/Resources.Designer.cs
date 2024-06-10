@@ -152,6 +152,15 @@ namespace xyDroidFolder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Receive progress：.
+        /// </summary>
+        internal static string Receive_file_progress {
+            get {
+                return ResourceManager.GetString("Receive_file_progress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Refresh {
@@ -167,6 +176,15 @@ namespace xyDroidFolder.Properties {
         internal static string ScanTitle {
             get {
                 return ResourceManager.GetString("ScanTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send progress: .
+        /// </summary>
+        internal static string Send_file_progress {
+            get {
+                return ResourceManager.GetString("Send_file_progress", resourceCulture);
             }
         }
         

@@ -20,12 +20,13 @@ using System.Reflection;
 using xyDroidFolder.clipboard;
 using xySoft.log;
 using System.Net.NetworkInformation;
+using xySoft.comm;
 
 namespace xyDroidFolder
 {
     public partial class FrmMain : Form
     {
-        bool isDebug = true; //true / false
+        bool isDebug = false; //true / false
 
         int qrSize = 200;
         int Port = 12919;
@@ -443,7 +444,17 @@ namespace xyDroidFolder
 
                 if (panelProgress.Visible)
                 {
-                    labelProgress.Text = e.FileSendReceive.ToString() + ": " +
+                    string progressName = "";
+                    switch (e.FileSendReceive)
+                    {
+                        case XyCommFileSendReceive.Receive:
+                            progressName = R.Receive_file_progress;
+                            break;
+                        case XyCommFileSendReceive.Send:
+                            progressName = R.Send_file_progress;
+                            break;
+                    }
+                    labelProgress.Text = progressName + 
                         "(" + ((float)progressBar1.Value / (float)progressBar1.Maximum)
                         .ToString(("#0.00%")) + ") "
                         + progressBar1.Value.ToString("##,#")
