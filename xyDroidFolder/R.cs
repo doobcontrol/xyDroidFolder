@@ -51,5 +51,19 @@ namespace xyDroidFolder
             => ResourceManager.GetString("tsbClipboardWatch_tooltip_notWatch");
         static public string? tsbClipboardWatch_tooltip_inWatch
             => ResourceManager.GetString("tsbClipboardWatch_tooltip_inWatch");
+        static public string? Text_received_msg
+            => ResourceManager.GetString("Text_received_msg");
+        static public string? Error_msg
+            => ResourceManager.GetString("Error_msg");
+        static public string? Download_succeed_msg
+            => ResourceManager.GetString("Download_succeed_msg");
+        static public string? Upload_succeed_msg
+            => ResourceManager.GetString("Upload_succeed_msg");
+        static public string? Get_folder_succeed_msg
+            => ResourceManager.GetString("Get_folder_succeed_msg");
+        static public string? Getting_folder_content_msg
+            => ResourceManager.GetString("Getting_folder_content_msg");
+        static public string? Sent_clipboard_text_msg
+            => ResourceManager.GetString("Sent_clipboard_text_msg");
     }
 }

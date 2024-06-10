@@ -19,12 +19,13 @@ using ComboBox = System.Windows.Forms.ComboBox;
 using System.Reflection;
 using xyDroidFolder.clipboard;
 using xySoft.log;
+using System.Net.NetworkInformation;
 
 namespace xyDroidFolder
 {
     public partial class FrmMain : Form
     {
-        bool isDebug = false; //true / false
+        bool isDebug = true; //true / false
 
         int qrSize = 200;
         int Port = 12919;
@@ -41,6 +42,13 @@ namespace xyDroidFolder
 
             this.Icon = Properties.Resources.xyfolder;
             this.Text = R.AppName;
+
+            lbStatus.Text = "";
+            lbStatus.Visible = false;
+            lbStatus.BorderStyle = BorderStyle.FixedSingle;
+
+            panelPopMessage.Visible = false;
+            panelPopMessage.BorderStyle = BorderStyle.FixedSingle;
 
             tsbRefreshCurrentNode.ToolTipText = R.tsbRefreshCurrentNode_tooltip;
 
@@ -161,6 +169,8 @@ namespace xyDroidFolder
                         string receivedText =
                             commData.cmdParDic[CmdPar.text.ToString()];
                         putToClipboard(receivedText);
+                        PopMessageByinvoke(R.Text_received_msg
+                            + receivedText);
                         break;
                     default:
                         break;
@@ -259,7 +269,11 @@ namespace xyDroidFolder
             {
                 showFiles(tn);
             }
-            btnUpload.Enabled = true;
+
+            if (tn.Tag != null)
+            {
+                btnUpload.Enabled = true;
+            }
         }
         private bool NodeNeedGet(TreeNode tn)
         {
@@ -317,13 +331,26 @@ namespace xyDroidFolder
             }
             string receivedFile = Path.Combine(receivedPath, file); ;
 
-            await droidFolderComm.GetFile(
-                    receivedFile, requestfile, streamReceiverPar);
+            try
+            {
+                await droidFolderComm.GetFile(
+                        receivedFile, requestfile, streamReceiverPar);
+            }
+            catch (DroidFolderCommException dfce)
+            {
+                PopMessage(R.Error_msg + dfce.Message);
+                hideStatusMessage();
+                return;
+            }
+            finally
+            {
+                panel4.Enabled = true;
+                panel5.Enabled = true;
+                panel6.Enabled = true;
+                ControlBox = true;
+            }
 
-            panel4.Enabled = true;
-            panel5.Enabled = true;
-            panel6.Enabled = true;
-            ControlBox = true;
+            PopMessage(R.Download_succeed_msg + receivedPath);
         }
 
         private async void btnUpload_Click(object sender, EventArgs e)
@@ -346,15 +373,28 @@ namespace xyDroidFolder
                     )
                     .Replace(treeView1.Tag.ToString() + "\\", "");
 
-                await droidFolderComm.SendFile(
-                        localFile, remoteFile);
+                try
+                {
+                    await droidFolderComm.SendFile(
+                            localFile, remoteFile);
+                }
+                catch (DroidFolderCommException dfce)
+                {
+                    PopMessage(R.Error_msg + dfce.Message);
+                    hideStatusMessage();
+                    return;
+                }
+                finally
+                {
+                    panel4.Enabled = true;
+                    panel5.Enabled = true;
+                    panel6.Enabled = true;
+                    ControlBox = true;
+                }
+
+                PopMessage(R.Upload_succeed_msg + localFile);
 
                 refreshNodeAsync(tn);
-
-                panel4.Enabled = true;
-                panel5.Enabled = true;
-                panel6.Enabled = true;
-                ControlBox = true;
             }
         }
 
@@ -422,21 +462,42 @@ namespace xyDroidFolder
         }
         private async Task refreshNodeAsync(TreeNode tn)
         {
+            showStatusMessage(R.Getting_folder_content_msg);
             TreeView tv = treeView1;
-            CommResult commResult;
+            CommResult commResult = null;
             if (tn.Level == 0)
             {
-                commResult =
-                        await droidFolderComm.GetInitFolder();
+                try
+                {
+                    commResult =
+                            await droidFolderComm.GetInitFolder();
+                }
+                catch(DroidFolderCommException dfce)
+                {
+                    PopMessage(R.Error_msg + dfce.Message);
+                    hideStatusMessage();
+                    return;
+                }
+
                 tn.Text = tv.Tag.ToString();
                 lbSelectedTargetPath.Text = tn.FullPath;
             }
             else
             {
+
                 string path = tn.FullPath.Replace(
                     tv.Tag.ToString() + "\\", "");
-                commResult =
-                    await droidFolderComm.GetFolder(path);
+                try
+                {
+                    commResult =
+                        await droidFolderComm.GetFolder(path);
+                }
+                catch (DroidFolderCommException dfce)
+                {
+                    PopMessage(R.Error_msg + dfce.Message);
+                    hideStatusMessage();
+                    return;
+                }
             }
 
 
@@ -469,6 +530,9 @@ namespace xyDroidFolder
             //show files
             tn.Tag = files;
             showFiles(tn);
+
+            PopMessage(R.Get_folder_succeed_msg);
+            hideStatusMessage();
         }
 
         private void tsbClipboardWatch_CheckedChanged(object sender, EventArgs e)
@@ -483,6 +547,47 @@ namespace xyDroidFolder
             }
 
             changeMonitorStatus(tsbClipboardWatch.Checked);
+        }
+
+        private void showStatusMessage(string msg)
+        {
+            lbStatus.Text = msg;
+            lbStatus.Visible = true;
+        }
+        private void hideStatusMessage()
+        {
+            lbStatus.Text = "";
+            lbStatus.Visible = false;
+        }
+        private async void PopMessage(string msg)
+        {
+            Label msgLabel = new Label();
+            msgLabel.AutoSize = false;
+            msgLabel.Dock = DockStyle.Top;
+            msgLabel.Text = msg;
+            panelPopMessage.Controls.Add(msgLabel);
+            panelPopMessage.Height = msgLabel.Height * panelPopMessage.Controls.Count + 1;
+            panelPopMessage.Visible = true;
+
+            await Task.Run(() => Thread.Sleep(5000));
+
+            panelPopMessage.Height = panelPopMessage.Height - msgLabel.Height;
+            panelPopMessage.Controls.Remove(msgLabel);
+            if (panelPopMessage.Controls.Count == 0)
+            {
+                panelPopMessage.Visible = false;
+            }
+        }
+        private void PopMessageByinvoke(string msg)
+        {
+            if (panelPopMessage.InvokeRequired)
+            {
+                panelPopMessage.Invoke(() => PopMessage(msg));
+            }
+            else
+            {
+                PopMessage(msg);
+            }
         }
 
         #region watch clipboard
@@ -527,6 +632,7 @@ namespace xyDroidFolder
             if (ClipboardString != null && InClipboardMonitor)
             {
                 droidFolderComm.SendText(ClipboardString);
+                PopMessageByinvoke(R.Sent_clipboard_text_msg + ClipboardString);
             }
 
         }

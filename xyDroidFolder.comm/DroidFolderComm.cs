@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using xySoft.comm;
@@ -151,10 +152,29 @@ namespace xyDroidFolder.comm
 
         private async Task<CommResult> XyCommRequestAsync(CommData commData)
         {
-            string resultString = await myIXyComm.sendForResponseAsync(
-                commData.toSendString()
-                );
-            d("request result: " + resultString);
+            string resultString = null;
+
+            try
+            {
+                resultString = await myIXyComm.sendForResponseAsync(
+                    commData.toSendString()
+                    );
+            }
+            catch(XySoftCommException xse)
+            {
+                switch (xse.ErrorCode)
+                {
+                    case XyCommErrorCode.TimedOut:
+                        throw new DroidFolderCommException(
+                            DroidFolderCommErrorCode.TimedOut,
+                            "TimedOut");
+                    default:
+                        throw new DroidFolderCommException(
+                            DroidFolderCommErrorCode.OtherError,
+                            "Net work error");
+                }
+            }
+
             return CommResult.fromReturnString(resultString, commData);
         }
 
@@ -174,7 +194,9 @@ namespace xyDroidFolder.comm
         {
             CommData commData = new CommData(DroidFolderCmd.GetInitFolder);
 
-            return await XyCommRequestAsync(commData);
+            CommResult commResult = await XyCommRequestAsync(commData);
+
+            return commResult;
         }
 
         public async Task<CommResult> GetFolder(string path)
@@ -342,6 +364,11 @@ namespace xyDroidFolder.comm
         files,
         returnMsg,
         errorMsg
+    }
+    public enum DroidFolderCommErrorCode
+    {
+        TimedOut = 10060,
+        OtherError = 0
     }
 
     public delegate void

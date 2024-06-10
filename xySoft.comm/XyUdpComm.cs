@@ -13,6 +13,7 @@ namespace xySoft.comm
     {
         IPEndPoint localPoint;
         IPEndPoint targetPoint;
+        int ResponseTimeout = 5000;
         XyCommRequestHandler _xyCommRequestHandler;
         event EventHandler<XyCommFileEventArgs> _xyCommFileEventHandler;
 
@@ -32,6 +33,7 @@ namespace xySoft.comm
         public async Task<byte[]> sendBytesForResponseAsync(byte[] sendBytes, int sendLength)
         {
             UdpClient uc = new UdpClient();
+            uc.Client.ReceiveTimeout = ResponseTimeout;
             uc.ExclusiveAddressUse = true;
             uc.Send(sendBytes, sendLength, targetPoint);
 
@@ -39,12 +41,18 @@ namespace xySoft.comm
             IPEndPoint tempPoint = new IPEndPoint(
                 targetPoint.Address,
                 targetPoint.Port);
-            byte[] receivedBytes = await Task.Run(() => {
-                    return uc.Receive(ref tempPoint);
-                });
+
+            byte[] receivedBytes = null;
+
+            //add async to bubble up exception:
+            //Even with newer versions of C#, it isn't always possible to use await
+            //instead of Task.Wait(). From await (C# Reference): "The asynchronous
+            //method in which await is used must be modified by the async keyword."
+            receivedBytes = await Task.Run(async () => { 
+                return uc.Receive(ref tempPoint);
+            });
 
             uc.Close();
-            uc = null;
 
             return receivedBytes;
         }
@@ -67,7 +75,7 @@ namespace xySoft.comm
 
             UdpClient uc = new UdpClient();
             uc.ExclusiveAddressUse = true;
-            uc.Client.ReceiveTimeout = 5000;
+            uc.Client.ReceiveTimeout = ResponseTimeout;
             uc.Connect(new IPEndPoint(targetPoint.Address, sendPort));
             uc.Send(
                 sendBytes,
@@ -131,8 +139,32 @@ namespace xySoft.comm
         public async Task<string> sendForResponseAsync(string sendData)
         {
             byte[] sendBytes = Encoding.UTF8.GetBytes(sendData);
-
-            byte[] returnBytes = await sendBytesForResponseAsync(sendBytes);
+            
+            byte[] returnBytes = null;
+            try
+            {
+                returnBytes = await sendBytesForResponseAsync(sendBytes);
+            }
+            catch (SocketException se)
+            {
+                d("sendBytesForResponseAsync:" + System.Environment.NewLine
+                    + "ErrorCode-" + se.ErrorCode + System.Environment.NewLine
+                    + "NativeErrorCode-" + se.NativeErrorCode + System.Environment.NewLine
+                    + "SocketErrorCode-" + se.SocketErrorCode + System.Environment.NewLine
+                    + "Message-" + se.Message
+                    );
+                switch (se.SocketErrorCode)
+                {
+                    case SocketError.TimedOut:
+                        throw new XySoftCommException(
+                            XyCommErrorCode.TimedOut,
+                            "TimedOut");
+                    default:
+                        throw new XySoftCommException(
+                            XyCommErrorCode.OtherError, 
+                            "Net work error");  
+                }
+            }
 
             return Encoding.UTF8.GetString(
                         returnBytes, 0, returnBytes.Length);
@@ -154,7 +186,7 @@ namespace xySoft.comm
                 {
                     while (!stopListen)
                     {
-                        IPEndPoint tempPoint 
+                        IPEndPoint tempPoint
                             = new IPEndPoint(IPAddress.Any, 0);
 
                         byte[] receivedBytes = udpServer.Receive(
@@ -199,7 +231,7 @@ namespace xySoft.comm
         public Task prepareStreamReceiver(
             string file,
             string fileLength,
-            string streamReceiverPar, 
+            string streamReceiverPar,
             EventHandler<XyCommFileEventArgs> xyCommFileEventHandler
             )
         {
@@ -213,7 +245,7 @@ namespace xySoft.comm
                 );
 
             //write file task
-            Dictionary<Int64, byte[]> receivedByteArrs = 
+            Dictionary<Int64, byte[]> receivedByteArrs =
                 new Dictionary<long, byte[]>();
             Int64 WaitedPkgID = 0;
 

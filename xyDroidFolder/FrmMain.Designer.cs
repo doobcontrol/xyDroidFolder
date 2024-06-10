@@ -31,7 +31,9 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             panelWork = new Panel();
+            lbStatus = new Label();
             panel5 = new Panel();
+            panelPopMessage = new Panel();
             panelTargetContent = new Panel();
             listView1 = new ListView();
             splitter1 = new Splitter();
@@ -68,6 +70,7 @@
             // 
             // panelWork
             // 
+            panelWork.Controls.Add(lbStatus);
             panelWork.Controls.Add(panel5);
             panelWork.Controls.Add(panel3);
             panelWork.Dock = DockStyle.Fill;
@@ -76,8 +79,18 @@
             panelWork.Size = new Size(600, 450);
             panelWork.TabIndex = 3;
             // 
+            // lbStatus
+            // 
+            lbStatus.Dock = DockStyle.Bottom;
+            lbStatus.Location = new Point(0, 398);
+            lbStatus.Name = "lbStatus";
+            lbStatus.Size = new Size(600, 17);
+            lbStatus.TabIndex = 6;
+            lbStatus.Text = "label2";
+            // 
             // panel5
             // 
+            panel5.Controls.Add(panelPopMessage);
             panel5.Controls.Add(panelTargetContent);
             panel5.Controls.Add(lbSelectedTargetPath);
             panel5.Controls.Add(toolStrip1);
@@ -86,6 +99,14 @@
             panel5.Name = "panel5";
             panel5.Size = new Size(600, 415);
             panel5.TabIndex = 2;
+            // 
+            // panelPopMessage
+            // 
+            panelPopMessage.Dock = DockStyle.Top;
+            panelPopMessage.Location = new Point(0, 42);
+            panelPopMessage.Name = "panelPopMessage";
+            panelPopMessage.Size = new Size(600, 39);
+            panelPopMessage.TabIndex = 6;
             // 
             // panelTargetContent
             // 
@@ -357,5 +378,7 @@
         private Splitter splitter1;
         private Label lbSelectedTargetPath;
         private ToolStripButton tsbClipboardWatch;
+        private Label lbStatus;
+        private Panel panelPopMessage;
     }
 }

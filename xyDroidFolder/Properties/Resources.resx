@@ -154,4 +154,25 @@
   <data name="tsbClipboardWatch_tooltip_notWatch" xml:space="preserve">
     <value>Click to start send and receive clipboard content</value>
   </data>
+  <data name="Download_succeed_msg" xml:space="preserve">
+    <value>Download succeed: </value>
+  </data>
+  <data name="Error_msg" xml:space="preserve">
+    <value>Error: </value>
+  </data>
+  <data name="Getting_folder_content_msg" xml:space="preserve">
+    <value>Getting folder content ...</value>
+  </data>
+  <data name="Get_folder_succeed_msg" xml:space="preserve">
+    <value>Get folder succeed</value>
+  </data>
+  <data name="Sent_clipboard_text_msg" xml:space="preserve">
+    <value>Sent clipboard text</value>
+  </data>
+  <data name="Text_received_msg" xml:space="preserve">
+    <value>Text received and putted to clipboard: </value>
+  </data>
+  <data name="Upload_succeed_msg" xml:space="preserve">
+    <value>Upload succeed: </value>
+  </data>
 </root>

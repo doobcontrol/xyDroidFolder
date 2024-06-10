@@ -89,6 +89,24 @@ namespace xyDroidFolder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download succeed: .
+        /// </summary>
+        internal static string Download_succeed_msg {
+            get {
+                return ResourceManager.GetString("Download_succeed_msg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: .
+        /// </summary>
+        internal static string Error_msg {
+            get {
+                return ResourceManager.GetString("Error_msg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Download.
         /// </summary>
         internal static string FileBtn_Download {
@@ -103,6 +121,24 @@ namespace xyDroidFolder.Properties {
         internal static string FileBtn_Upload {
             get {
                 return ResourceManager.GetString("FileBtn_Upload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Get folder succeed.
+        /// </summary>
+        internal static string Get_folder_succeed_msg {
+            get {
+                return ResourceManager.GetString("Get_folder_succeed_msg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Getting folder content ....
+        /// </summary>
+        internal static string Getting_folder_content_msg {
+            get {
+                return ResourceManager.GetString("Getting_folder_content_msg", resourceCulture);
             }
         }
         
@@ -135,6 +171,24 @@ namespace xyDroidFolder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sent clipboard text.
+        /// </summary>
+        internal static string Sent_clipboard_text_msg {
+            get {
+                return ResourceManager.GetString("Sent_clipboard_text_msg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text received and putted to clipboard: .
+        /// </summary>
+        internal static string Text_received_msg {
+            get {
+                return ResourceManager.GetString("Text_received_msg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Whatching clipborad. Click to stop.
         /// </summary>
         internal static string tsbClipboardWatch_tooltip_inWatch {
@@ -158,6 +212,15 @@ namespace xyDroidFolder.Properties {
         internal static string tsbRefreshCurrentNode_tooltip {
             get {
                 return ResourceManager.GetString("tsbRefreshCurrentNode_tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload succeed: .
+        /// </summary>
+        internal static string Upload_succeed_msg {
+            get {
+                return ResourceManager.GetString("Upload_succeed_msg", resourceCulture);
             }
         }
         

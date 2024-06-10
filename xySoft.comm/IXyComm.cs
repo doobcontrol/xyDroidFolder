@@ -44,4 +44,9 @@ namespace xySoft.comm
         public long Progress { get; private set; }
     }
     public enum XyCommFileSendReceive { Send, Receive }
+    public enum XyCommErrorCode
+    {
+        TimedOut = 10060,
+        OtherError = 0
+    }
 }
