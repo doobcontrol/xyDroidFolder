@@ -181,4 +181,10 @@
   <data name="Send_file_progress" xml:space="preserve">
     <value>Send progress: </value>
   </data>
+  <data name="Request_download" xml:space="preserve">
+    <value>Request download ...: </value>
+  </data>
+  <data name="Request_upload" xml:space="preserve">
+    <value>Request upload ...: </value>
+  </data>
 </root>

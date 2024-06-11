@@ -313,6 +313,7 @@ namespace xyDroidFolder
 
         private async void btnDownload_ClickAsync(object sender, EventArgs e)
         {
+
             panel4.Enabled = false;
             panel5.Enabled = false;
             panel6.Enabled = false;
@@ -334,6 +335,7 @@ namespace xyDroidFolder
 
             try
             {
+                showStatusMessage(R.Request_download + requestfile);
                 await droidFolderComm.GetFile(
                         receivedFile, requestfile, streamReceiverPar);
             }
@@ -351,7 +353,7 @@ namespace xyDroidFolder
                 ControlBox = true;
             }
 
-            PopMessage(R.Download_succeed_msg + receivedPath);
+            PopMessage(R.Download_succeed_msg + receivedFile);
         }
 
         private async void btnUpload_Click(object sender, EventArgs e)
@@ -376,6 +378,7 @@ namespace xyDroidFolder
 
                 try
                 {
+                    showStatusMessage(R.Request_upload + localFile);
                     await droidFolderComm.SendFile(
                             localFile, remoteFile);
                 }
@@ -428,6 +431,7 @@ namespace xyDroidFolder
                         progressBar1.Maximum = (int)e.Length;
                         progressBar1.Value = 0;
                         panelProgress.Visible = true;
+                        hideStatusMessageByinvoke();
                         break;
                     case FileIOEventType.end:
                         panelProgress.Visible = false;
@@ -570,8 +574,21 @@ namespace xyDroidFolder
             lbStatus.Text = "";
             lbStatus.Visible = false;
         }
+        private void hideStatusMessageByinvoke()
+        {
+            if (lbStatus.InvokeRequired)
+            {
+                lbStatus.Invoke(() => hideStatusMessage());
+            }
+            else
+            {
+                hideStatusMessage();
+            }
+        }
         private async void PopMessage(string msg)
         {
+            hideStatusMessageByinvoke();
+
             Label msgLabel = new Label();
             msgLabel.AutoSize = false;
             msgLabel.Dock = DockStyle.Top;

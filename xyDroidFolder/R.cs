@@ -68,7 +68,11 @@ namespace xyDroidFolder
         static public string? Send_file_progress
             => ResourceManager.GetString("Send_file_progress");
         static public string? Receive_file_progress
-            => ResourceManager.GetString("Receive_file_progress"); 
+            => ResourceManager.GetString("Receive_file_progress");
+        static public string? Request_upload
+            => ResourceManager.GetString("Request_upload");
+        static public string? Request_download
+            => ResourceManager.GetString("Request_download");
 
     }
 }

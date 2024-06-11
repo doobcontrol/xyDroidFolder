@@ -171,6 +171,24 @@ namespace xyDroidFolder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Request download ...: .
+        /// </summary>
+        internal static string Request_download {
+            get {
+                return ResourceManager.GetString("Request_download", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Request upload ...: .
+        /// </summary>
+        internal static string Request_upload {
+            get {
+                return ResourceManager.GetString("Request_upload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Scan this QR to connect.
         /// </summary>
         internal static string ScanTitle {

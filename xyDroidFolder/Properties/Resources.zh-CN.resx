@@ -147,6 +147,12 @@
   <data name="Receive_file_progress" xml:space="preserve">
     <value>下载进度：</value>
   </data>
+  <data name="Request_download" xml:space="preserve">
+    <value>请求下载 ...: </value>
+  </data>
+  <data name="Request_upload" xml:space="preserve">
+    <value>请求上传 ...: </value>
+  </data>
   <data name="ScanTitle" xml:space="preserve">
     <value>扫描此条码连接</value>
   </data>
