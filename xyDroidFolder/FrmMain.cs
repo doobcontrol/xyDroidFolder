@@ -353,7 +353,7 @@ namespace xyDroidFolder
                 ControlBox = true;
             }
 
-            PopMessage(R.Download_succeed_msg + receivedFile);
+            PopMessage(R.Download_succeed_msg + Path.GetFullPath(receivedFile));
         }
 
         private async void btnUpload_Click(object sender, EventArgs e)
