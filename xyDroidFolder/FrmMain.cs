@@ -21,6 +21,7 @@ using xyDroidFolder.clipboard;
 using xySoft.log;
 using System.Net.NetworkInformation;
 using xySoft.comm;
+using System.IO;
 
 namespace xyDroidFolder
 {
@@ -172,6 +173,21 @@ namespace xyDroidFolder
                         putToClipboard(receivedText);
                         PopMessageByinvoke(R.Text_received_msg
                             + receivedText);
+                        break;
+                    case DroidFolderCmd.SendFile:
+                        string path = ".\\temp";
+                        string sendfile = Path.Combine(
+                                path,
+                                commData.cmdParDic[CmdPar.targetFile.ToString()]);
+
+                        commData.cmdParDic[CmdPar.targetFile.ToString()]
+                            = sendfile;
+
+                        commResult.resultDataDic.Add(
+                            CmdPar.streamReceiverPar.ToString(),
+                            streamReceiverPar);
+
+                        showStatusMessage("ready to receive file: " + sendfile);
                         break;
                     default:
                         break;
