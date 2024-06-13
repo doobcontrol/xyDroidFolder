@@ -187,4 +187,7 @@
   <data name="Request_upload" xml:space="preserve">
     <value>Request upload ...: </value>
   </data>
+  <data name="Received_File" xml:space="preserve">
+    <value>Received File: </value>
+  </data>
 </root>

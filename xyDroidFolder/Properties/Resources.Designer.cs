@@ -161,6 +161,15 @@ namespace xyDroidFolder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Received File: .
+        /// </summary>
+        internal static string Received_File {
+            get {
+                return ResourceManager.GetString("Received_File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Refresh {

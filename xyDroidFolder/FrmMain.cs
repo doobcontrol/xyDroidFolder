@@ -187,7 +187,8 @@ namespace xyDroidFolder
                             CmdPar.streamReceiverPar.ToString(),
                             streamReceiverPar);
 
-                        showStatusMessage("ready to receive file: " + sendfile);
+                        //if file too tiny, message show by showStatusMessage disappear too soon
+                        PopMessageByinvoke(R.Received_File + sendfile);
                         break;
                     default:
                         break;

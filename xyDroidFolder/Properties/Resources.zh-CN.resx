@@ -144,6 +144,9 @@
   <data name="InitFolderNode" xml:space="preserve">
     <value>点击获取初始目录内容</value>
   </data>
+  <data name="Received_File" xml:space="preserve">
+    <value>收到文件: </value>
+  </data>
   <data name="Receive_file_progress" xml:space="preserve">
     <value>下载进度：</value>
   </data>

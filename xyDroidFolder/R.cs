@@ -73,6 +73,8 @@ namespace xyDroidFolder
             => ResourceManager.GetString("Request_upload");
         static public string? Request_download
             => ResourceManager.GetString("Request_download");
+        static public string? Received_File
+            => ResourceManager.GetString("Received_File");
 
     }
 }
