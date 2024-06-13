@@ -188,7 +188,7 @@ namespace xyDroidFolder
                             streamReceiverPar);
 
                         //if file too tiny, message show by showStatusMessage disappear too soon
-                        PopMessageByinvoke(R.Received_File + sendfile);
+                        PopMessageByinvoke(R.Received_File + Path.GetFullPath(sendfile));
                         break;
                     default:
                         break;
@@ -199,6 +199,7 @@ namespace xyDroidFolder
                 XyLog.log(e);
             }
         }
+        
         //from test fail(all item disabbled)
         private void recoverUi()
         {
