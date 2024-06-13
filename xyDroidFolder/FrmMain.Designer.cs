@@ -56,6 +56,7 @@
             comboBox1 = new ComboBox();
             pictureBox1 = new PictureBox();
             label1 = new Label();
+            tsbOpenReceiveFolder = new ToolStripButton();
             panelWork.SuspendLayout();
             panel5.SuspendLayout();
             panelTargetContent.SuspendLayout();
@@ -169,7 +170,7 @@
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new ToolStripItem[] { tsbRefreshCurrentNode, tsbClipboardWatch });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { tsbRefreshCurrentNode, tsbClipboardWatch, tsbOpenReceiveFolder });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(600, 25);
@@ -327,6 +328,16 @@
             label1.Text = "label1";
             label1.TextAlign = ContentAlignment.TopCenter;
             // 
+            // tsbOpenReceiveFolder
+            // 
+            tsbOpenReceiveFolder.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsbOpenReceiveFolder.Image = Properties.Resources.folder_star_icon;
+            tsbOpenReceiveFolder.ImageTransparentColor = Color.Magenta;
+            tsbOpenReceiveFolder.Name = "tsbOpenReceiveFolder";
+            tsbOpenReceiveFolder.Size = new Size(23, 22);
+            tsbOpenReceiveFolder.Text = "toolStripButton1";
+            tsbOpenReceiveFolder.Click += tsbOpenReceiveFolder_Click;
+            // 
             // FrmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
@@ -380,5 +391,6 @@
         private ToolStripButton tsbClipboardWatch;
         private Label lbStatus;
         private Panel panelPopMessage;
+        private ToolStripButton tsbOpenReceiveFolder;
     }
 }

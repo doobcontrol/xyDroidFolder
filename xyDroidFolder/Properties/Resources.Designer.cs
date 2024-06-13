@@ -125,6 +125,16 @@ namespace xyDroidFolder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap folder_star_icon {
+            get {
+                object obj = ResourceManager.GetObject("folder-star-icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Get folder succeed.
         /// </summary>
         internal static string Get_folder_succeed_msg {
@@ -248,6 +258,15 @@ namespace xyDroidFolder.Properties {
         internal static string tsbClipboardWatch_tooltip_notWatch {
             get {
                 return ResourceManager.GetString("tsbClipboardWatch_tooltip_notWatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open folder of received file.
+        /// </summary>
+        internal static string tsbOpenReceiveFolder_tooltip {
+            get {
+                return ResourceManager.GetString("tsbOpenReceiveFolder_tooltip", resourceCulture);
             }
         }
         

@@ -29,6 +29,8 @@ namespace xyDroidFolder
     {
         bool isDebug = false; //true / false
 
+        string receivedPath = ".\\temp";
+
         int qrSize = 200;
         int Port = 12919;
         //stream receiver listen port for other side to connect
@@ -53,6 +55,7 @@ namespace xyDroidFolder
             panelPopMessage.BorderStyle = BorderStyle.FixedSingle;
 
             tsbRefreshCurrentNode.ToolTipText = R.tsbRefreshCurrentNode_tooltip;
+            tsbOpenReceiveFolder.ToolTipText = R.tsbOpenReceiveFolder_tooltip;
 
             tsbClipboardWatch.Checked = false;
             tsbClipboardWatch.ToolTipText = R.tsbClipboardWatch_tooltip_notWatch;
@@ -194,12 +197,12 @@ namespace xyDroidFolder
                         break;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 XyLog.log(e);
             }
         }
-        
+
         //from test fail(all item disabbled)
         private void recoverUi()
         {
@@ -344,12 +347,11 @@ namespace xyDroidFolder
             string requestfile = Path.Combine(path, file).Replace(
                 treeView1.Tag.ToString() + "\\", "");
 
-            string receivedPath = ".\\temp";
             if (!Directory.Exists(receivedPath))
             {
                 Directory.CreateDirectory(receivedPath);
             }
-            string receivedFile = Path.Combine(receivedPath, file); ;
+            string receivedFile = Path.Combine(receivedPath, file); 
 
             try
             {
@@ -476,7 +478,7 @@ namespace xyDroidFolder
                             progressName = R.Send_file_progress;
                             break;
                     }
-                    labelProgress.Text = progressName + 
+                    labelProgress.Text = progressName +
                         "(" + ((float)progressBar1.Value / (float)progressBar1.Maximum)
                         .ToString(("#0.00%")) + ") "
                         + progressBar1.Value.ToString("##,#")
@@ -505,7 +507,7 @@ namespace xyDroidFolder
                     commResult =
                             await droidFolderComm.GetInitFolder();
                 }
-                catch(DroidFolderCommException dfce)
+                catch (DroidFolderCommException dfce)
                 {
                     PopMessage(R.Error_msg + dfce.Message);
                     hideStatusMessage();
@@ -636,6 +638,20 @@ namespace xyDroidFolder
             }
         }
 
+        private void tsbOpenReceiveFolder_Click(object sender, EventArgs e)
+        {
+
+            if (!Directory.Exists(receivedPath))
+            {
+                Directory.CreateDirectory(receivedPath);
+            }
+            string windir = Environment.GetEnvironmentVariable("WINDIR");
+            System.Diagnostics.Process prc = new System.Diagnostics.Process();
+            prc.StartInfo.FileName = windir + @"\explorer.exe";
+            prc.StartInfo.Arguments = receivedPath;// outputFolder;
+            prc.Start();
+        }
+
         #region watch clipboard
 
         bool InClipboardMonitor = false;
@@ -688,7 +704,8 @@ namespace xyDroidFolder
             InClipboardMonitor = false;
 
             //deal with "Current thread must be set to single thread apartment (STA)" error
-            Thread thread = new Thread(new ThreadStart(() => {
+            Thread thread = new Thread(new ThreadStart(() =>
+            {
                 Clipboard.SetText(putString);
             }));
             thread.SetApartmentState(ApartmentState.STA); //important

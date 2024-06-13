@@ -75,6 +75,8 @@ namespace xyDroidFolder
             => ResourceManager.GetString("Request_download");
         static public string? Received_File
             => ResourceManager.GetString("Received_File");
+        static public string? tsbOpenReceiveFolder_tooltip
+            => ResourceManager.GetString("tsbOpenReceiveFolder_tooltip");
 
     }
 }
