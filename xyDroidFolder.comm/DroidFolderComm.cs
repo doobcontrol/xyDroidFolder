@@ -73,7 +73,9 @@ namespace xyDroidFolder.comm
                     case DroidFolderCmd.GetFile:
                         _droidFolderRequestHandler(commData, commResult);
 
-                        _xyFileIOEventHandler(
+                        _ = Task.Run(async () =>
+                        {
+                            _xyFileIOEventHandler(
                             this,
                             new XyFileIOEventArgs(
                                 FileIOEventType.start,
@@ -83,31 +85,73 @@ namespace xyDroidFolder.comm
                                 )
                             );
 
-                        _ = myIXyComm.sendFile(
-                            commData.cmdParDic[CmdPar.targetFile.ToString()],
-                            commResult.resultDataDic[CmdPar.fileLength.ToString()],
-                            commData.cmdParDic[CmdPar.streamReceiverPar.ToString()],
-                            FileEventHandler);
+                            CancellationTokenSource succeedTokenSource = new CancellationTokenSource();
+                            succeedTokenSourceDic.Add(commData.cmdID, succeedTokenSource);
+                            await myIXyComm.sendFile(
+                                commData.cmdParDic[CmdPar.targetFile.ToString()],
+                                commResult.resultDataDic[CmdPar.fileLength.ToString()],
+                                commData.cmdParDic[CmdPar.streamReceiverPar.ToString()],
+                                succeedTokenSource.Token,
+                                FileEventHandler);
+                            succeedTokenSource.Dispose();
+
+                            _xyFileIOEventHandler(
+                                this,
+                                new XyFileIOEventArgs(
+                                    FileIOEventType.end,
+                                    XyCommFileSendReceive.Send,
+                                    0,
+                                    0
+                                    )
+                                );
+                        });
+
                         break;
                     case DroidFolderCmd.SendFile:
                         _droidFolderRequestHandler(commData, commResult);
 
-                        _xyFileIOEventHandler(
-                            this,
-                            new XyFileIOEventArgs(
-                                FileIOEventType.start,
-                                XyCommFileSendReceive.Receive,
-                                int.Parse(commData.cmdParDic[CmdPar.fileLength.ToString()]),
-                                0
-                                )
-                            );
+                        _ = Task.Run(async () => {
+                            _xyFileIOEventHandler(
+                                this,
+                                new XyFileIOEventArgs(
+                                    FileIOEventType.start,
+                                    XyCommFileSendReceive.Receive,
+                                    int.Parse(commData.cmdParDic[CmdPar.fileLength.ToString()]),
+                                    0
+                                    )
+                                );
 
-                        _ = myIXyComm.prepareStreamReceiver(
-                            commData.cmdParDic[CmdPar.targetFile.ToString()],
-                            commData.cmdParDic[CmdPar.fileLength.ToString()],
-                            commResult.resultDataDic[CmdPar.streamReceiverPar.ToString()],
-                            FileEventHandler);
+                            await myIXyComm.prepareStreamReceiver(
+                                commData.cmdParDic[CmdPar.targetFile.ToString()],
+                                commData.cmdParDic[CmdPar.fileLength.ToString()],
+                                commResult.resultDataDic[CmdPar.streamReceiverPar.ToString()],
+                                FileEventHandler);
 
+                            comfirmReceiveFileSucceed(commData.cmdID);
+
+                            _xyFileIOEventHandler(
+                                this,
+                                new XyFileIOEventArgs(
+                                    FileIOEventType.end,
+                                    XyCommFileSendReceive.Receive,
+                                    0,
+                                    0
+                                    )
+                                );
+                        });
+
+                        break;
+                    case DroidFolderCmd.SendFileSucceed:
+                        d("succeedTokenSourceDic[commData.cmdID]?.Cancel();");
+                        string sendFileCmdID = 
+                            commData.cmdParDic[CmdPar.sendFileCmdID.ToString()];
+                        if (succeedTokenSourceDic.ContainsKey(sendFileCmdID))
+                        {
+                            d("succeedTokenSourceDic[commData.cmdID]?.Cancel():"
+                                + sendFileCmdID);
+                            succeedTokenSourceDic[sendFileCmdID]?.Cancel();
+                        }
+                        
                         break;
                     case DroidFolderCmd.SendText:
                         commData.cmdParDic[CmdPar.text.ToString()] = 
@@ -236,6 +280,8 @@ namespace xyDroidFolder.comm
                 streamReceiverPar,
                 FileEventHandler);
 
+            comfirmReceiveFileSucceed(commData.cmdID);
+
             _xyFileIOEventHandler(
                 this,
                 new XyFileIOEventArgs(
@@ -247,6 +293,8 @@ namespace xyDroidFolder.comm
                 );
         }
 
+        private Dictionary<string, CancellationTokenSource> succeedTokenSourceDic
+            = new Dictionary<string, CancellationTokenSource>();
         public async Task SendFile(string sendFile, string targetFile)
         {
             string fileLengthStr = new FileInfo(sendFile).Length.ToString();
@@ -269,12 +317,16 @@ namespace xyDroidFolder.comm
                     )
                 );
 
+            CancellationTokenSource succeedTokenSource = new CancellationTokenSource();
+            succeedTokenSourceDic.Add(commData.cmdID, succeedTokenSource);
             await myIXyComm.sendFile(
                 sendFile,
                 fileLengthStr,
                 commResult.resultDataDic[CmdPar.streamReceiverPar.ToString()],
+                succeedTokenSource.Token,
                 FileEventHandler);
             d("send done");
+            succeedTokenSource.Dispose();
 
             _xyFileIOEventHandler(
                 this,
@@ -293,6 +345,14 @@ namespace xyDroidFolder.comm
             commData.cmdParDic.Add(CmdPar.text.ToString(), encodeParString(sendText));
 
             return await XyCommRequestAsync(commData);
+        }
+
+        private void comfirmReceiveFileSucceed(string cmdID)
+        {
+            CommData commData = new CommData(DroidFolderCmd.SendFileSucceed);
+            commData.cmdParDic.Add(CmdPar.sendFileCmdID.ToString(), encodeParString(cmdID));
+
+            XyCommRequestAsync(commData);
         }
 
         #region encode/decode par string
@@ -345,12 +405,14 @@ namespace xyDroidFolder.comm
         GetFolder,
         GetFile,
         SendFile,
+        SendFileSucceed,
         SendText
     }
     public enum CmdPar
     {
         cmd,
         cmdID,
+        sendFileCmdID,
         cmdSucceed,
         ip,
         port,

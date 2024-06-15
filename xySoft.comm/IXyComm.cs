@@ -21,6 +21,7 @@ namespace xySoft.comm
             string file, 
             string fileLength, 
             string streamReceiverPar,
+            CancellationToken succeedToken,
             EventHandler<XyCommFileEventArgs> xyCommFileEventHandler);
     }
 

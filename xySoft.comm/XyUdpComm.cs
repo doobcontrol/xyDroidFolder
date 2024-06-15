@@ -95,7 +95,7 @@ namespace xySoft.comm
                 }
                 catch (Exception e)
                 {
-                    d("uc.Receive: " + e.Message + " : " + e.StackTrace);
+                    //d("uc.Receive: " + e.Message + " : " + e.StackTrace);
                 }
             });
 
@@ -197,6 +197,7 @@ namespace xySoft.comm
                             );
 
                         string resultString = _xyCommRequestHandler(receivedString);
+
                         if (resultString != null)
                         {
                             udpServer.Send(
@@ -420,6 +421,7 @@ namespace xySoft.comm
             string file,
             string fileLength,
             string streamReceiverPar,
+            CancellationToken succeedToken,
             EventHandler<XyCommFileEventArgs> xyCommFileEventHandler
             )
         {
@@ -493,6 +495,10 @@ namespace xySoft.comm
                                 bool sendSucceed = false;
                                 while (!sendSucceed)
                                 {
+                                    if (succeedToken.IsCancellationRequested)
+                                    {
+                                        break;
+                                    }
                                     try
                                     {
                                         sendSucceed =
