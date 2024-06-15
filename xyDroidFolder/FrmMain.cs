@@ -22,6 +22,7 @@ using xySoft.log;
 using System.Net.NetworkInformation;
 using xySoft.comm;
 using System.IO;
+using Button = System.Windows.Forms.Button;
 
 namespace xyDroidFolder
 {
@@ -609,23 +610,44 @@ namespace xyDroidFolder
         {
             hideStatusMessageByinvoke();
 
+            Panel msgPanel = new Panel();
+            msgPanel.Dock = DockStyle.Top;
+            msgPanel.Height = 23;
+
+            Button closeBtn = new Button();
+            closeBtn.Dock = DockStyle.Left;
+            closeBtn.Size = new Size(23, 22);
+            closeBtn.Image = Properties.Resources.Close;
+
+            CancelMsg cancelMsg = () => {
+                panelPopMessage.Height = panelPopMessage.Height - msgPanel.Height;
+                panelPopMessage.Controls.Remove(msgPanel);
+                if (panelPopMessage.Controls.Count == 0)
+                {
+                    panelPopMessage.Visible = false;
+                }
+            };
+            closeBtn.Click += (object sender, EventArgs e) => {
+                cancelMsg();
+            };
+
             Label msgLabel = new Label();
             msgLabel.AutoSize = false;
-            msgLabel.Dock = DockStyle.Top;
+            msgLabel.Dock = DockStyle.Fill;
+            msgLabel.TextAlign = ContentAlignment.MiddleLeft;
             msgLabel.Text = msg;
-            panelPopMessage.Controls.Add(msgLabel);
-            panelPopMessage.Height = msgLabel.Height * panelPopMessage.Controls.Count + 1;
+
+            msgPanel.Controls.Add(msgLabel);
+            msgPanel.Controls.Add(closeBtn);
+
+            panelPopMessage.Controls.Add(msgPanel);
+            panelPopMessage.Height = msgPanel.Height * panelPopMessage.Controls.Count + 1;
             panelPopMessage.Visible = true;
 
             await Task.Run(() => Thread.Sleep(5000));
-
-            panelPopMessage.Height = panelPopMessage.Height - msgLabel.Height;
-            panelPopMessage.Controls.Remove(msgLabel);
-            if (panelPopMessage.Controls.Count == 0)
-            {
-                panelPopMessage.Visible = false;
-            }
+            cancelMsg();
         }
+        delegate void CancelMsg();
         private void PopMessageByinvoke(string msg)
         {
             if (panelPopMessage.InvokeRequired)
