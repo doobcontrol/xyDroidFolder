@@ -329,6 +329,7 @@ namespace xyDroidFolder.comm
                 FileEventHandler);
             d("send done");
             succeedTokenSource.Dispose();
+            succeedTokenSourceDic.Remove(commData.cmdID);
 
             _xyFileIOEventHandler(
                 this,
