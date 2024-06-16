@@ -359,12 +359,26 @@ namespace xyDroidFolder
                 showStatusMessage(R.Request_download + requestfile);
                 await droidFolderComm.GetFile(
                         receivedFile, requestfile, streamReceiverPar);
+
+                PopMessage(R.Download_succeed_msg + Path.GetFullPath(receivedFile));
+
+                //open file
+                using Process process = 
+                    new Process { 
+                        StartInfo = new ProcessStartInfo(receivedFile) { 
+                            UseShellExecute = true } 
+                    };
+                process.Start();
             }
             catch (DroidFolderCommException dfce)
             {
                 PopMessage(R.Error_msg + dfce.Message);
                 hideStatusMessage();
-                return;
+            }
+            catch(Exception ex)
+            {
+                PopMessage(R.Error_msg + ex.Message);
+                hideStatusMessage();
             }
             finally
             {
@@ -373,8 +387,6 @@ namespace xyDroidFolder
                 panel6.Enabled = true;
                 ControlBox = true;
             }
-
-            PopMessage(R.Download_succeed_msg + Path.GetFullPath(receivedFile));
         }
 
         private async void btnUpload_Click(object sender, EventArgs e)
