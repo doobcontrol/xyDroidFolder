@@ -94,6 +94,7 @@ namespace xyDroidFolder.comm
                                 succeedTokenSource.Token,
                                 FileEventHandler);
                             succeedTokenSource.Dispose();
+                            succeedTokenSourceDic.Remove(commData.cmdID);
 
                             _xyFileIOEventHandler(
                                 this,
@@ -150,6 +151,7 @@ namespace xyDroidFolder.comm
                             d("succeedTokenSourceDic[commData.cmdID]?.Cancel():"
                                 + sendFileCmdID);
                             succeedTokenSourceDic[sendFileCmdID]?.Cancel();
+                            succeedTokenSourceDic.Remove(sendFileCmdID);
                         }
                         
                         break;
