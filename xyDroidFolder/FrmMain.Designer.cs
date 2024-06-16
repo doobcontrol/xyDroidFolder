@@ -43,6 +43,7 @@
             toolStrip1 = new ToolStrip();
             tsbRefreshCurrentNode = new ToolStripButton();
             tsbClipboardWatch = new ToolStripButton();
+            tsbOpenReceiveFolder = new ToolStripButton();
             panel3 = new Panel();
             panelProgress = new Panel();
             progressBar1 = new ProgressBar();
@@ -56,7 +57,6 @@
             comboBox1 = new ComboBox();
             pictureBox1 = new PictureBox();
             label1 = new Label();
-            tsbOpenReceiveFolder = new ToolStripButton();
             panelWork.SuspendLayout();
             panel5.SuspendLayout();
             panelTargetContent.SuspendLayout();
@@ -128,6 +128,7 @@
             listView1.TabIndex = 1;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
+            listView1.DoubleClick += listView1_DoubleClick;
             // 
             // splitter1
             // 
@@ -198,6 +199,16 @@
             tsbClipboardWatch.Text = "toolStripButton1";
             tsbClipboardWatch.ToolTipText = "start/stop watch clipboard";
             tsbClipboardWatch.CheckedChanged += tsbClipboardWatch_CheckedChanged;
+            // 
+            // tsbOpenReceiveFolder
+            // 
+            tsbOpenReceiveFolder.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            tsbOpenReceiveFolder.Image = Properties.Resources.folder_star_icon;
+            tsbOpenReceiveFolder.ImageTransparentColor = Color.Magenta;
+            tsbOpenReceiveFolder.Name = "tsbOpenReceiveFolder";
+            tsbOpenReceiveFolder.Size = new Size(23, 22);
+            tsbOpenReceiveFolder.Text = "toolStripButton1";
+            tsbOpenReceiveFolder.Click += tsbOpenReceiveFolder_Click;
             // 
             // panel3
             // 
@@ -327,16 +338,6 @@
             label1.TabIndex = 1;
             label1.Text = "label1";
             label1.TextAlign = ContentAlignment.TopCenter;
-            // 
-            // tsbOpenReceiveFolder
-            // 
-            tsbOpenReceiveFolder.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            tsbOpenReceiveFolder.Image = Properties.Resources.folder_star_icon;
-            tsbOpenReceiveFolder.ImageTransparentColor = Color.Magenta;
-            tsbOpenReceiveFolder.Name = "tsbOpenReceiveFolder";
-            tsbOpenReceiveFolder.Size = new Size(23, 22);
-            tsbOpenReceiveFolder.Text = "toolStripButton1";
-            tsbOpenReceiveFolder.Click += tsbOpenReceiveFolder_Click;
             // 
             // FrmMain
             // 

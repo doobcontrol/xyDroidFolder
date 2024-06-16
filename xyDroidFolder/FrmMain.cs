@@ -335,6 +335,14 @@ namespace xyDroidFolder
 
         private async void btnDownload_ClickAsync(object sender, EventArgs e)
         {
+            _ = downloadSelectedFild();
+        }
+        private async Task downloadSelectedFild()
+        {
+            if (listView1.SelectedItems.Count == 0)
+            {
+                return;
+            }
 
             panel4.Enabled = false;
             panel5.Enabled = false;
@@ -352,7 +360,7 @@ namespace xyDroidFolder
             {
                 Directory.CreateDirectory(receivedPath);
             }
-            string receivedFile = Path.Combine(receivedPath, file); 
+            string receivedFile = Path.Combine(receivedPath, file);
 
             try
             {
@@ -363,10 +371,13 @@ namespace xyDroidFolder
                 PopMessage(R.Download_succeed_msg + Path.GetFullPath(receivedFile));
 
                 //open file
-                using Process process = 
-                    new Process { 
-                        StartInfo = new ProcessStartInfo(receivedFile) { 
-                            UseShellExecute = true } 
+                using Process process =
+                    new Process
+                    {
+                        StartInfo = new ProcessStartInfo(receivedFile)
+                        {
+                            UseShellExecute = true
+                        }
                     };
                 process.Start();
             }
@@ -375,7 +386,7 @@ namespace xyDroidFolder
                 PopMessage(R.Error_msg + dfce.Message);
                 hideStatusMessage();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 PopMessage(R.Error_msg + ex.Message);
                 hideStatusMessage();
@@ -631,7 +642,8 @@ namespace xyDroidFolder
             closeBtn.Size = new Size(23, 22);
             closeBtn.Image = Properties.Resources.Close;
 
-            CancelMsg cancelMsg = () => {
+            CancelMsg cancelMsg = () =>
+            {
                 panelPopMessage.Height = panelPopMessage.Height - msgPanel.Height;
                 panelPopMessage.Controls.Remove(msgPanel);
                 if (panelPopMessage.Controls.Count == 0)
@@ -639,7 +651,8 @@ namespace xyDroidFolder
                     panelPopMessage.Visible = false;
                 }
             };
-            closeBtn.Click += (object sender, EventArgs e) => {
+            closeBtn.Click += (object sender, EventArgs e) =>
+            {
                 cancelMsg();
             };
 
@@ -684,6 +697,11 @@ namespace xyDroidFolder
             prc.StartInfo.FileName = windir + @"\explorer.exe";
             prc.StartInfo.Arguments = receivedPath;// outputFolder;
             prc.Start();
+        }
+
+        private void listView1_DoubleClick(object sender, EventArgs e)
+        {
+            _ = downloadSelectedFild();
         }
 
         #region watch clipboard
