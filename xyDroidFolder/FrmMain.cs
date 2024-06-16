@@ -565,7 +565,7 @@ namespace xyDroidFolder
                 ].Split("|").ToList<string>();
             for (int i = 0; i < folders.Count; i++)
             {
-                folders[i] = DroidFolderComm.decodeParString(folders[i]);
+                folders[i] = folders[i];
             }
 
             List<string> files = commResult.resultDataDic[
@@ -573,7 +573,7 @@ namespace xyDroidFolder
                 ].Split("|").ToList<string>();
             for (int i = 0; i < files.Count; i++)
             {
-                files[i] = DroidFolderComm.decodeParString(files[i]);
+                files[i] = files[i];
             }
 
             tv.BeginUpdate();

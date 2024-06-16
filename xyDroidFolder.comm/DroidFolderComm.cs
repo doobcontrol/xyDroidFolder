@@ -157,7 +157,7 @@ namespace xyDroidFolder.comm
                         break;
                     case DroidFolderCmd.SendText:
                         commData.cmdParDic[CmdPar.text.ToString()] = 
-                            decodeParString(commData.cmdParDic[CmdPar.text.ToString()]);
+                            commData.cmdParDic[CmdPar.text.ToString()];
                         _droidFolderRequestHandler(commData, commResult);
                         break;
 
@@ -345,7 +345,7 @@ namespace xyDroidFolder.comm
         public async Task<CommResult> SendText(string sendText)
         {
             CommData commData = new CommData(DroidFolderCmd.SendText);
-            commData.cmdParDic.Add(CmdPar.text.ToString(), encodeParString(sendText));
+            commData.cmdParDic.Add(CmdPar.text.ToString(), sendText);
 
             return await XyCommRequestAsync(commData);
         }
@@ -353,47 +353,10 @@ namespace xyDroidFolder.comm
         private void comfirmReceiveFileSucceed(string cmdID)
         {
             CommData commData = new CommData(DroidFolderCmd.SendFileSucceed);
-            commData.cmdParDic.Add(CmdPar.sendFileCmdID.ToString(), encodeParString(cmdID));
+            commData.cmdParDic.Add(CmdPar.sendFileCmdID.ToString(), cmdID);
 
             XyCommRequestAsync(commData);
         }
-
-        #region encode/decode par string
-
-        static Dictionary<string, string> encodeDic = new Dictionary<string, string>()
-        {
-            {",", "xyCommA" },
-            { "=", "xyEquaL" }
-        };
-
-        static Dictionary<string, string> dncodeDic = new Dictionary<string, string>()
-        {
-            {"xyCommA", "," },
-            { "xyEquaL", "=" }
-        };
-
-        static public string encodeParString(string parString)
-        {
-            return stringReplace(parString, encodeDic);
-        }
-        static public string decodeParString(string parString)
-        {
-            return stringReplace(parString, dncodeDic);
-        }
-        static public string stringReplace(string rString, 
-            Dictionary<string, string> rDic)
-        {
-            string retString = rString;
-
-            foreach (string key in rDic.Keys)
-            {
-                retString = retString.Replace(key, rDic[key]);
-            }
-
-            return retString;
-        }
-
-        #endregion
 
         //debug
         static public void d(string msg)

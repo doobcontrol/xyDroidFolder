@@ -25,7 +25,8 @@ namespace xyDroidFolder.comm
                         DroidFolderCommErrorCode.OtherError,
                         "ReturnString: " + ReturnString); 
                 }
-                resultDic.Add(parArr[0], parArr[1]);
+                resultDic.Add(parArr[0],
+                    CommStringEncode.decodeParString(parArr[1]));
             }
 
             this.cmdID = resultDic[CmdPar.cmdID.ToString()];
@@ -49,7 +50,8 @@ namespace xyDroidFolder.comm
             sendString += "," + CmdPar.cmdSucceed + "=" + cmdSucceed;
             foreach (string pName in resultDataDic.Keys)
             {
-                sendString += "," + pName + "=" + resultDataDic[pName];
+                sendString += "," + pName + "=" +
+                    CommStringEncode.encodeParString(resultDataDic[pName]);
             }
             return sendString;
         }

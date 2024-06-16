@@ -19,7 +19,8 @@ namespace xyDroidFolder.comm
             foreach (string par in pars)
             {
                 string[] parArr = par.Split('=');
-                parsDic.Add(parArr[0], parArr[1]);
+                parsDic.Add(parArr[0],
+                    CommStringEncode.decodeParString(parArr[1]));
             }
 
             this.cmd = (DroidFolderCmd)Enum.Parse(
@@ -43,7 +44,8 @@ namespace xyDroidFolder.comm
             sendString += "," + CmdPar.cmdID + "=" + cmdID;
             foreach (string pName in cmdParDic.Keys)
             {
-                sendString += "," + pName + "=" + cmdParDic[pName];
+                sendString += "," + pName + "=" +
+                    CommStringEncode.encodeParString(cmdParDic[pName]);
             }
             return sendString;
         }
