@@ -20,6 +20,11 @@ namespace xyDroidFolder.comm
             foreach (string par in pars)
             {
                 string[] parArr = par.Split('=');
+                if (parArr.Length != 2) { 
+                    throw new DroidFolderCommException(
+                        DroidFolderCommErrorCode.OtherError,
+                        "ReturnString: " + ReturnString); 
+                }
                 resultDic.Add(parArr[0], parArr[1]);
             }
 

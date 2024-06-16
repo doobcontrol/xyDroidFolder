@@ -319,7 +319,7 @@ namespace xyDroidFolder
             listView1.Clear();
             btnDownload.Enabled = false;
             listView1.Tag = tn;
-            string[] files = tn.Tag as string[];
+            List<string> files = tn.Tag as List<string>;
 
             // Set the view to show details.
             listView1.View = View.List;
@@ -560,12 +560,21 @@ namespace xyDroidFolder
             }
 
 
-            string[] folders = commResult.resultDataDic[
+            List<string> folders = commResult.resultDataDic[
                 CmdPar.folders.ToString()
-                ].Split("|");
-            string[] files = commResult.resultDataDic[
+                ].Split("|").ToList<string>();
+            for (int i = 0; i < folders.Count; i++)
+            {
+                folders[i] = DroidFolderComm.decodeParString(folders[i]);
+            }
+
+            List<string> files = commResult.resultDataDic[
                 CmdPar.files.ToString()
-                ].Split("|");
+                ].Split("|").ToList<string>();
+            for (int i = 0; i < files.Count; i++)
+            {
+                files[i] = DroidFolderComm.decodeParString(files[i]);
+            }
 
             tv.BeginUpdate();
             TreeNode TempTn;
@@ -581,7 +590,7 @@ namespace xyDroidFolder
 
             tv.EndUpdate();
 
-            if (folders.Length > 0)
+            if (folders.Count > 0)
             {
                 tn.Expand();
             }
@@ -631,6 +640,7 @@ namespace xyDroidFolder
         }
         private async void PopMessage(string msg)
         {
+            XyLog.log(msg);
             hideStatusMessageByinvoke();
 
             Panel msgPanel = new Panel();

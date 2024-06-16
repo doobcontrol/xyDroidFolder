@@ -87,7 +87,9 @@ namespace SimulateAndroid
                         {
                             folderStr += "|";
                         }
-                        folderStr += Path.GetFileName(subdirectory);
+                        folderStr += DroidFolderComm.encodeParString(
+                            Path.GetFileName(subdirectory)
+                            );
                     }
                     commResult.resultDataDic.Add(
                         CmdPar.folders.ToString(), folderStr);
@@ -100,7 +102,9 @@ namespace SimulateAndroid
                         {
                             fileStr += "|";
                         }
-                        fileStr += Path.GetFileName(fileName);
+                        fileStr += DroidFolderComm.encodeParString(
+                            Path.GetFileName(fileName)
+                            );
                     }
                     commResult.resultDataDic.Add(
                         CmdPar.files.ToString(), fileStr);
@@ -120,7 +124,9 @@ namespace SimulateAndroid
                         {
                             folderStr += "|";
                         }
-                        folderStr += Path.GetFileName(subdirectory);
+                        folderStr += DroidFolderComm.encodeParString(
+                            Path.GetFileName(subdirectory)
+                            );
                     }
                     commResult.resultDataDic.Add(
                         CmdPar.folders.ToString(), folderStr);
@@ -133,7 +139,9 @@ namespace SimulateAndroid
                         {
                             fileStr += "|";
                         }
-                        fileStr += Path.GetFileName(fileName);
+                        fileStr += DroidFolderComm.encodeParString(
+                            Path.GetFileName(fileName)
+                            );
                     }
                     commResult.resultDataDic.Add(
                         CmdPar.files.ToString(), fileStr);
