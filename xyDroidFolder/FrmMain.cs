@@ -524,6 +524,7 @@ namespace xyDroidFolder
             showStatusMessage(R.Getting_folder_content_msg);
             TreeView tv = treeView1;
             CommResult commResult = null;
+            string path = "\\";
             if (tn.Level == 0)
             {
                 try
@@ -544,7 +545,7 @@ namespace xyDroidFolder
             else
             {
 
-                string path = tn.FullPath.Replace(
+                path = tn.FullPath.Replace(
                     tv.Tag.ToString() + "\\", "");
                 try
                 {
@@ -599,7 +600,7 @@ namespace xyDroidFolder
             tn.Tag = files;
             showFiles(tn);
 
-            PopMessage(R.Get_folder_succeed_msg);
+            PopMessage(R.Get_folder_succeed_msg + ": " + path);
             hideStatusMessage();
         }
 
