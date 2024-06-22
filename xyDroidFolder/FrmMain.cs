@@ -23,6 +23,8 @@ using System.Net.NetworkInformation;
 using xySoft.comm;
 using System.IO;
 using Button = System.Windows.Forms.Button;
+using System.Collections;
+using System.Globalization;
 
 namespace xyDroidFolder
 {
@@ -43,10 +45,7 @@ namespace xyDroidFolder
         {
             InitializeComponent();
 
-            R.setCulture("zh-CN"); //zh-CN
-
             this.Icon = Properties.Resources.xyfolder;
-            this.Text = R.AppName;
 
             lbStatus.Text = "";
             lbStatus.Visible = false;
@@ -55,11 +54,7 @@ namespace xyDroidFolder
             panelPopMessage.Visible = false;
             panelPopMessage.BorderStyle = BorderStyle.FixedSingle;
 
-            tsbRefreshCurrentNode.ToolTipText = R.tsbRefreshCurrentNode_tooltip;
-            tsbOpenReceiveFolder.ToolTipText = R.tsbOpenReceiveFolder_tooltip;
-
             tsbClipboardWatch.Checked = false;
-            tsbClipboardWatch.ToolTipText = R.tsbClipboardWatch_tooltip_notWatch;
 
             panelWork.Visible = false;
             labelProgress.Text = "0/0";
@@ -67,17 +62,14 @@ namespace xyDroidFolder
             panel1.Width = qrSize;
             pictureBox1.Height = qrSize;
 
-            btnExit.Text = R.App_Exit;
-            btnDownload.Text = R.FileBtn_Download;
-            btnUpload.Text = R.FileBtn_Upload;
-            label1.Text = R.ScanTitle;
-
             lbSelectedTargetPath.Text = null;
 
             btnDownload.Enabled = false;
             btnUpload.Enabled = false;
 
             panelTargetContent.Dock = DockStyle.Fill;
+
+            configLanguage();
 
             if (isDebug)
             {
@@ -714,6 +706,61 @@ namespace xyDroidFolder
         {
             _ = downloadSelectedFild();
         }
+
+        #region config Language
+        private void configLanguage()
+        {
+            BindingList<DictionaryEntry> LanguageList = new BindingList<DictionaryEntry>();
+            LanguageList.Add(new DictionaryEntry("en-US", "English (United States)"));
+            LanguageList.Add(new DictionaryEntry("zh-CN", "中文 (中国)"));
+            cmbLanguage.DataSource = LanguageList;
+            cmbLanguage.DisplayMember = "Value";
+            cmbLanguage.ValueMember = "Key";
+            cmbLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbLanguage.SelectedIndexChanged += configLanguage_SelectedIndexChanged;
+
+            string? langConfig = XyConfig.getOnePar("langConfig");
+            if (langConfig == null)
+            {
+                langConfig = CultureInfo.CurrentUICulture.Name;
+            }
+
+            if (langConfig == cmbLanguage.SelectedValue.ToString())
+            {
+                changeLanguage(langConfig);
+            }
+            else
+            {
+                cmbLanguage.SelectedValue = langConfig;
+            }
+        }
+        private void configLanguage_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            ComboBox cb = cmbLanguage;
+            if (cb.SelectedValue != null)
+            {
+                string langConfig = cb.SelectedValue.ToString();
+                XyConfig.setOnePar("langConfig", langConfig);
+
+                changeLanguage(langConfig);
+            }
+        }
+        private void changeLanguage(string langConfig)
+        {
+            R.setCulture(langConfig);
+
+            this.Text = R.AppName;
+
+            tsbRefreshCurrentNode.ToolTipText = R.tsbRefreshCurrentNode_tooltip;
+            tsbOpenReceiveFolder.ToolTipText = R.tsbOpenReceiveFolder_tooltip;
+            tsbClipboardWatch.ToolTipText = R.tsbClipboardWatch_tooltip_notWatch;
+
+            btnExit.Text = R.App_Exit;
+            btnDownload.Text = R.FileBtn_Download;
+            btnUpload.Text = R.FileBtn_Upload;
+            label1.Text = R.ScanTitle;
+        }
+        #endregion
 
         #region watch clipboard
 

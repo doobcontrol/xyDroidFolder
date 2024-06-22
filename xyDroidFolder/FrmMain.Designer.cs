@@ -54,6 +54,7 @@
             panel4 = new Panel();
             btnExit = new Button();
             panel1 = new Panel();
+            cmbLanguage = new ComboBox();
             comboBox1 = new ComboBox();
             pictureBox1 = new PictureBox();
             label1 = new Label();
@@ -77,15 +78,15 @@
             panelWork.Dock = DockStyle.Fill;
             panelWork.Location = new Point(200, 0);
             panelWork.Name = "panelWork";
-            panelWork.Size = new Size(600, 450);
+            panelWork.Size = new Size(600, 397);
             panelWork.TabIndex = 3;
             // 
             // lbStatus
             // 
             lbStatus.Dock = DockStyle.Bottom;
-            lbStatus.Location = new Point(0, 398);
+            lbStatus.Location = new Point(0, 351);
             lbStatus.Name = "lbStatus";
-            lbStatus.Size = new Size(600, 17);
+            lbStatus.Size = new Size(600, 15);
             lbStatus.TabIndex = 6;
             lbStatus.Text = "label2";
             // 
@@ -98,15 +99,15 @@
             panel5.Dock = DockStyle.Fill;
             panel5.Location = new Point(0, 0);
             panel5.Name = "panel5";
-            panel5.Size = new Size(600, 415);
+            panel5.Size = new Size(600, 366);
             panel5.TabIndex = 2;
             // 
             // panelPopMessage
             // 
             panelPopMessage.Dock = DockStyle.Top;
-            panelPopMessage.Location = new Point(0, 42);
+            panelPopMessage.Location = new Point(0, 40);
             panelPopMessage.Name = "panelPopMessage";
-            panelPopMessage.Size = new Size(600, 39);
+            panelPopMessage.Size = new Size(600, 34);
             panelPopMessage.TabIndex = 6;
             // 
             // panelTargetContent
@@ -114,9 +115,9 @@
             panelTargetContent.Controls.Add(listView1);
             panelTargetContent.Controls.Add(splitter1);
             panelTargetContent.Controls.Add(treeView1);
-            panelTargetContent.Location = new Point(60, 138);
+            panelTargetContent.Location = new Point(60, 122);
             panelTargetContent.Name = "panelTargetContent";
-            panelTargetContent.Size = new Size(447, 243);
+            panelTargetContent.Size = new Size(447, 214);
             panelTargetContent.TabIndex = 3;
             // 
             // listView1
@@ -124,7 +125,7 @@
             listView1.Dock = DockStyle.Fill;
             listView1.Location = new Point(209, 0);
             listView1.Name = "listView1";
-            listView1.Size = new Size(238, 243);
+            listView1.Size = new Size(238, 214);
             listView1.TabIndex = 1;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
@@ -134,7 +135,7 @@
             // 
             splitter1.Location = new Point(199, 0);
             splitter1.Name = "splitter1";
-            splitter1.Size = new Size(10, 243);
+            splitter1.Size = new Size(10, 214);
             splitter1.TabIndex = 3;
             splitter1.TabStop = false;
             // 
@@ -146,7 +147,7 @@
             treeView1.Location = new Point(0, 0);
             treeView1.Name = "treeView1";
             treeView1.SelectedImageIndex = 0;
-            treeView1.Size = new Size(199, 243);
+            treeView1.Size = new Size(199, 214);
             treeView1.TabIndex = 2;
             treeView1.NodeMouseClick += treeView1_NodeMouseClick;
             // 
@@ -165,7 +166,7 @@
             lbSelectedTargetPath.Dock = DockStyle.Top;
             lbSelectedTargetPath.Location = new Point(0, 25);
             lbSelectedTargetPath.Name = "lbSelectedTargetPath";
-            lbSelectedTargetPath.Size = new Size(600, 17);
+            lbSelectedTargetPath.Size = new Size(600, 15);
             lbSelectedTargetPath.TabIndex = 5;
             lbSelectedTargetPath.Text = "label2";
             // 
@@ -216,9 +217,9 @@
             panel3.Controls.Add(panel6);
             panel3.Controls.Add(panel4);
             panel3.Dock = DockStyle.Bottom;
-            panel3.Location = new Point(0, 415);
+            panel3.Location = new Point(0, 366);
             panel3.Name = "panel3";
-            panel3.Size = new Size(600, 35);
+            panel3.Size = new Size(600, 31);
             panel3.TabIndex = 0;
             // 
             // panelProgress
@@ -229,7 +230,7 @@
             panelProgress.Location = new Point(169, 0);
             panelProgress.Name = "panelProgress";
             panelProgress.Padding = new Padding(3);
-            panelProgress.Size = new Size(341, 35);
+            panelProgress.Size = new Size(341, 31);
             panelProgress.TabIndex = 4;
             // 
             // progressBar1
@@ -237,15 +238,15 @@
             progressBar1.Dock = DockStyle.Fill;
             progressBar1.Location = new Point(3, 3);
             progressBar1.Name = "progressBar1";
-            progressBar1.Size = new Size(335, 12);
+            progressBar1.Size = new Size(335, 10);
             progressBar1.TabIndex = 0;
             // 
             // labelProgress
             // 
             labelProgress.Dock = DockStyle.Bottom;
-            labelProgress.Location = new Point(3, 15);
+            labelProgress.Location = new Point(3, 13);
             labelProgress.Name = "labelProgress";
-            labelProgress.Size = new Size(335, 17);
+            labelProgress.Size = new Size(335, 15);
             labelProgress.TabIndex = 1;
             labelProgress.Text = "label2";
             labelProgress.TextAlign = ContentAlignment.TopCenter;
@@ -257,14 +258,14 @@
             panel6.Dock = DockStyle.Left;
             panel6.Location = new Point(0, 0);
             panel6.Name = "panel6";
-            panel6.Size = new Size(169, 35);
+            panel6.Size = new Size(169, 31);
             panel6.TabIndex = 3;
             // 
             // btnDownload
             // 
             btnDownload.Location = new Point(6, 3);
             btnDownload.Name = "btnDownload";
-            btnDownload.Size = new Size(75, 23);
+            btnDownload.Size = new Size(75, 20);
             btnDownload.TabIndex = 1;
             btnDownload.Text = "btnDownload";
             btnDownload.UseVisualStyleBackColor = true;
@@ -274,7 +275,7 @@
             // 
             btnUpload.Location = new Point(87, 3);
             btnUpload.Name = "btnUpload";
-            btnUpload.Size = new Size(75, 23);
+            btnUpload.Size = new Size(75, 20);
             btnUpload.TabIndex = 2;
             btnUpload.Text = "btnUpload";
             btnUpload.UseVisualStyleBackColor = true;
@@ -286,14 +287,14 @@
             panel4.Dock = DockStyle.Right;
             panel4.Location = new Point(510, 0);
             panel4.Name = "panel4";
-            panel4.Size = new Size(90, 35);
+            panel4.Size = new Size(90, 31);
             panel4.TabIndex = 0;
             // 
             // btnExit
             // 
             btnExit.Location = new Point(3, 3);
             btnExit.Name = "btnExit";
-            btnExit.Size = new Size(75, 23);
+            btnExit.Size = new Size(75, 20);
             btnExit.TabIndex = 0;
             btnExit.Text = "btnExit";
             btnExit.UseVisualStyleBackColor = true;
@@ -301,6 +302,7 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(cmbLanguage);
             panel1.Controls.Add(comboBox1);
             panel1.Controls.Add(pictureBox1);
             panel1.Controls.Add(label1);
@@ -308,24 +310,33 @@
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
             panel1.Padding = new Padding(3, 0, 0, 0);
-            panel1.Size = new Size(200, 450);
+            panel1.Size = new Size(200, 397);
             panel1.TabIndex = 2;
+            // 
+            // cmbLanguage
+            // 
+            cmbLanguage.Dock = DockStyle.Top;
+            cmbLanguage.FormattingEnabled = true;
+            cmbLanguage.Location = new Point(3, 82);
+            cmbLanguage.Name = "cmbLanguage";
+            cmbLanguage.Size = new Size(197, 23);
+            cmbLanguage.TabIndex = 7;
             // 
             // comboBox1
             // 
             comboBox1.Dock = DockStyle.Top;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(3, 67);
+            comboBox1.Location = new Point(3, 59);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(197, 25);
+            comboBox1.Size = new Size(197, 23);
             comboBox1.TabIndex = 2;
             // 
             // pictureBox1
             // 
             pictureBox1.Dock = DockStyle.Top;
-            pictureBox1.Location = new Point(3, 17);
+            pictureBox1.Location = new Point(3, 15);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(197, 50);
+            pictureBox1.Size = new Size(197, 44);
             pictureBox1.TabIndex = 1;
             pictureBox1.TabStop = false;
             // 
@@ -334,16 +345,16 @@
             label1.Dock = DockStyle.Top;
             label1.Location = new Point(3, 0);
             label1.Name = "label1";
-            label1.Size = new Size(197, 17);
+            label1.Size = new Size(197, 15);
             label1.TabIndex = 1;
             label1.Text = "label1";
             label1.TextAlign = ContentAlignment.TopCenter;
             // 
             // FrmMain
             // 
-            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(800, 397);
             Controls.Add(panelWork);
             Controls.Add(panel1);
             Name = "FrmMain";
@@ -393,5 +404,6 @@
         private Label lbStatus;
         private Panel panelPopMessage;
         private ToolStripButton tsbOpenReceiveFolder;
+        private ComboBox cmbLanguage;
     }
 }
