@@ -41,9 +41,10 @@ namespace xySoft.log
                         await runningTask;
                         runningTask = null;
                     }
-                    runningTask = Task.Run(() => { runLog(); });
-
-                    running = false;
+                    runningTask = Task.Run(() => { 
+                        runLog();
+                        running = false;
+                    });
                 }
             });
         }
