@@ -1,30 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Net.Sockets;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using ZXing.Common;
 using ZXing;
 using xyDroidFolder.comm;
 using System.Diagnostics;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using TreeView = System.Windows.Forms.TreeView;
 using ComboBox = System.Windows.Forms.ComboBox;
-using System.Reflection;
 using xyDroidFolder.clipboard;
-using xySoft.log;
-using System.Net.NetworkInformation;
 using xySoft.comm;
-using System.IO;
 using Button = System.Windows.Forms.Button;
 using System.Collections;
 using System.Globalization;
+using xySoft.log;
 
 namespace xyDroidFolder
 {

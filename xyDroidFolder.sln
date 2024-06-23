@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xySoft.comm", "xySoft.comm\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xyDroidFolder.clipboard", "xyDroidFolder.clipboard\xyDroidFolder.clipboard.csproj", "{4FE48AD2-6AF4-4BC5-BB1D-35F7B6C3BA59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xySoft.log", "xySoft.log\xySoft.log.csproj", "{EA1F8C13-0DFD-4376-A888-B7DC8CDD9B70}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,10 +45,6 @@ Global
 		{4FE48AD2-6AF4-4BC5-BB1D-35F7B6C3BA59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FE48AD2-6AF4-4BC5-BB1D-35F7B6C3BA59}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FE48AD2-6AF4-4BC5-BB1D-35F7B6C3BA59}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EA1F8C13-0DFD-4376-A888-B7DC8CDD9B70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EA1F8C13-0DFD-4376-A888-B7DC8CDD9B70}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EA1F8C13-0DFD-4376-A888-B7DC8CDD9B70}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EA1F8C13-0DFD-4376-A888-B7DC8CDD9B70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

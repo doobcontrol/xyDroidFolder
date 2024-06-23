@@ -14,13 +14,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="xySoft.log" Version="1.0.1" />
     <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.12" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\xyDroidFolder.clipboard\xyDroidFolder.clipboard.csproj" />
     <ProjectReference Include="..\xyDroidFolder.comm\xyDroidFolder.comm.csproj" />
-    <ProjectReference Include="..\xySoft.log\xySoft.log.csproj" />
   </ItemGroup>
 
   <ItemGroup>
