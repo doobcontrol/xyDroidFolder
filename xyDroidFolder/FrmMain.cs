@@ -35,6 +35,7 @@ namespace xyDroidFolder
 
             this.Icon = Properties.Resources.xyfolder;
 
+            lbVersion.Text = "V" + Application.ProductVersion.Split("+")[0];
             lbStatus.Text = "";
             lbStatus.Visible = false;
             lbStatus.BorderStyle = BorderStyle.FixedSingle;

@@ -58,6 +58,7 @@
             comboBox1 = new ComboBox();
             pictureBox1 = new PictureBox();
             label1 = new Label();
+            lbVersion = new Label();
             panelWork.SuspendLayout();
             panel5.SuspendLayout();
             panelTargetContent.SuspendLayout();
@@ -302,6 +303,7 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(lbVersion);
             panel1.Controls.Add(cmbLanguage);
             panel1.Controls.Add(comboBox1);
             panel1.Controls.Add(pictureBox1);
@@ -349,6 +351,15 @@
             label1.TabIndex = 1;
             label1.Text = "label1";
             label1.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // lbVersion
+            // 
+            lbVersion.Dock = DockStyle.Bottom;
+            lbVersion.Location = new Point(3, 382);
+            lbVersion.Name = "lbVersion";
+            lbVersion.Size = new Size(197, 15);
+            lbVersion.TabIndex = 7;
+            lbVersion.Text = "label2";
             // 
             // FrmMain
             // 
@@ -405,5 +416,6 @@
         private Panel panelPopMessage;
         private ToolStripButton tsbOpenReceiveFolder;
         private ComboBox cmbLanguage;
+        private Label lbVersion;
     }
 }
